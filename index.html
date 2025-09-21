@@ -58,21 +58,71 @@
         </div>
     </section>
     <section id="title-bar">
-        <svg class="grid-svg" width="21" height="21" viewBox="0 0 21 21" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <rect width="9" height="9" rx="2" fill="#FCF0D9"/>
-            <rect y="12" width="9" height="9" rx="2" fill="#FCF0D9"/>
-            <rect x="12" width="9" height="9" rx="2" fill="#FCF0D9"/>
-            <rect x="12" y="12" width="9" height="9" rx="2" fill="#FCF0D9"/>
-        </svg>
+        <button id="grid-btn">
+            <svg class="grid-svg" width="21" height="21" viewBox="0 0 21 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect width="9" height="9" rx="2" fill="#FCF0D9"/>
+                <rect y="12" width="9" height="9" rx="2" fill="#FCF0D9"/>
+                <rect x="12" width="9" height="9" rx="2" fill="#FCF0D9"/>
+                <rect x="12" y="12" width="9" height="9" rx="2" fill="#FCF0D9"/>
+            </svg>
+        </button>
         <h1 class="sherika">canopy</h1>
-        <svg class="gear-svg" width="20" height="21" viewBox="0 0 20 21" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M19.9446 6.83454C20.0772 7.19144 19.9653 7.58937 19.6793 7.84372L17.8848 9.46005C17.9304 9.80055 17.9552 10.1492 17.9552 10.5021C17.9552 10.8549 17.9304 11.2036 17.8848 11.5441L19.6793 13.1604C19.9653 13.4147 20.0772 13.8127 19.9446 14.1696C19.7622 14.6577 19.5425 15.1254 19.2897 15.5767L19.0949 15.909C18.8214 16.3602 18.5147 16.7869 18.179 17.1889C17.9345 17.4843 17.5284 17.5827 17.1636 17.4679L14.8552 16.7417C14.2998 17.1643 13.6865 17.5171 13.0317 17.7837L12.5136 20.1262C12.4307 20.4995 12.1406 20.7949 11.7593 20.8564C11.1874 20.9508 10.5989 21 9.99793 21C9.39699 21 8.80848 20.9508 8.23654 20.8564C7.85526 20.7949 7.56515 20.4995 7.48226 20.1262L6.96421 17.7837C6.30939 17.5171 5.69601 17.1643 5.14066 16.7417L2.83635 17.472C2.47164 17.5868 2.06549 17.4843 1.82097 17.193C1.48527 16.791 1.17858 16.3643 0.90505 15.9131L0.710262 15.5808C0.457452 15.1295 0.237797 14.6618 0.0554424 14.1737C-0.0771793 13.8168 0.0347202 13.4188 0.320686 13.1645L2.11522 11.5482C2.06963 11.2036 2.04477 10.8549 2.04477 10.5021C2.04477 10.1492 2.06963 9.80055 2.11522 9.46005L0.320686 7.84372C0.0347202 7.58937 -0.0771793 7.19144 0.0554424 6.83454C0.237797 6.34636 0.457452 5.87869 0.710262 5.42743L0.90505 5.09514C1.17858 4.64388 1.48527 4.21723 1.82097 3.8152C2.06549 3.51983 2.47164 3.42137 2.83635 3.53624L5.1448 4.26236C5.70015 3.83981 6.31353 3.48701 6.96835 3.22036L7.4864 0.877906C7.56929 0.504591 7.8594 0.209221 8.24069 0.147685C8.81262 0.0492284 9.40113 0 10.0021 0C10.603 0 11.1915 0.0492284 11.7635 0.143583C12.1447 0.205118 12.4349 0.500488 12.5177 0.873803L13.0358 3.21625C13.6906 3.48291 14.304 3.83571 14.8593 4.25825L17.1678 3.53214C17.5325 3.41727 17.9387 3.51983 18.1832 3.8111C18.5189 4.21313 18.8256 4.63977 19.0991 5.09103L19.2939 5.42333C19.5467 5.87458 19.7663 6.34225 19.9487 6.83044L19.9446 6.83454ZM10.0021 13.7839C10.8814 13.7839 11.7247 13.4382 12.3465 12.8227C12.9683 12.2072 13.3176 11.3725 13.3176 10.5021C13.3176 9.63164 12.9683 8.79688 12.3465 8.1814C11.7247 7.56593 10.8814 7.22016 10.0021 7.22016C9.12274 7.22016 8.27941 7.56593 7.65763 8.1814C7.03584 8.79688 6.68653 9.63164 6.68653 10.5021C6.68653 11.3725 7.03584 12.2072 7.65763 12.8227C8.27941 13.4382 9.12274 13.7839 10.0021 13.7839Z" fill="#FCF0D9"/>
-        </svg>
+        <button id="gear-btn">
+            <svg class="gear-svg" width="20" height="21" viewBox="0 0 20 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M19.9446 6.83454C20.0772 7.19144 19.9653 7.58937 19.6793 7.84372L17.8848 9.46005C17.9304 9.80055 17.9552 10.1492 17.9552 10.5021C17.9552 10.8549 17.9304 11.2036 17.8848 11.5441L19.6793 13.1604C19.9653 13.4147 20.0772 13.8127 19.9446 14.1696C19.7622 14.6577 19.5425 15.1254 19.2897 15.5767L19.0949 15.909C18.8214 16.3602 18.5147 16.7869 18.179 17.1889C17.9345 17.4843 17.5284 17.5827 17.1636 17.4679L14.8552 16.7417C14.2998 17.1643 13.6865 17.5171 13.0317 17.7837L12.5136 20.1262C12.4307 20.4995 12.1406 20.7949 11.7593 20.8564C11.1874 20.9508 10.5989 21 9.99793 21C9.39699 21 8.80848 20.9508 8.23654 20.8564C7.85526 20.7949 7.56515 20.4995 7.48226 20.1262L6.96421 17.7837C6.30939 17.5171 5.69601 17.1643 5.14066 16.7417L2.83635 17.472C2.47164 17.5868 2.06549 17.4843 1.82097 17.193C1.48527 16.791 1.17858 16.3643 0.90505 15.9131L0.710262 15.5808C0.457452 15.1295 0.237797 14.6618 0.0554424 14.1737C-0.0771793 13.8168 0.0347202 13.4188 0.320686 13.1645L2.11522 11.5482C2.06963 11.2036 2.04477 10.8549 2.04477 10.5021C2.04477 10.1492 2.06963 9.80055 2.11522 9.46005L0.320686 7.84372C0.0347202 7.58937 -0.0771793 7.19144 0.0554424 6.83454C0.237797 6.34636 0.457452 5.87869 0.710262 5.42743L0.90505 5.09514C1.17858 4.64388 1.48527 4.21723 1.82097 3.8152C2.06549 3.51983 2.47164 3.42137 2.83635 3.53624L5.1448 4.26236C5.70015 3.83981 6.31353 3.48701 6.96835 3.22036L7.4864 0.877906C7.56929 0.504591 7.8594 0.209221 8.24069 0.147685C8.81262 0.0492284 9.40113 0 10.0021 0C10.603 0 11.1915 0.0492284 11.7635 0.143583C12.1447 0.205118 12.4349 0.500488 12.5177 0.873803L13.0358 3.21625C13.6906 3.48291 14.304 3.83571 14.8593 4.25825L17.1678 3.53214C17.5325 3.41727 17.9387 3.51983 18.1832 3.8111C18.5189 4.21313 18.8256 4.63977 19.0991 5.09103L19.2939 5.42333C19.5467 5.87458 19.7663 6.34225 19.9487 6.83044L19.9446 6.83454ZM10.0021 13.7839C10.8814 13.7839 11.7247 13.4382 12.3465 12.8227C12.9683 12.2072 13.3176 11.3725 13.3176 10.5021C13.3176 9.63164 12.9683 8.79688 12.3465 8.1814C11.7247 7.56593 10.8814 7.22016 10.0021 7.22016C9.12274 7.22016 8.27941 7.56593 7.65763 8.1814C7.03584 8.79688 6.68653 9.63164 6.68653 10.5021C6.68653 11.3725 7.03584 12.2072 7.65763 12.8227C8.27941 13.4382 9.12274 13.7839 10.0021 13.7839Z" fill="#FCF0D9"/>
+            </svg>
+        </button>
     </section>
     <section id="home-screen">
         <div id="reminders-home">
-            <div>
-
+            <div id="recent-reminders">
+                <h2 class="dm-light"><span class="dm-black">7/15</span> TODAY</h2>
+                <div class="reminder-card">
+                    <img src="images/template-plant.webp" alt="Plant Template Image">
+                    <h1 class="sherika">charlie</h1>
+                    <p class="dm-light">Water at <span class="dm-black">10:00am</span></p>
+                    <div>
+                        <label class="checkbox-wrapper">
+                            <input type="checkbox">
+                            <div class="custom-box">
+                                <svg width="26" height="20" viewBox="0 0 26 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M2 11.5135L8.34615 18L24 2" stroke="#95DB59" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+                <div class="reminder-card">
+                    <img src="images/template-plant.webp" alt="Plant Template Image">
+                    <h1 class="sherika">charlie</h1>
+                    <p class="dm-light">Water at <span class="dm-black">10:00am</span></p>
+                    <div>
+                        <label class="checkbox-wrapper">
+                            <input type="checkbox">
+                            <div class="custom-box">
+                                <svg width="26" height="20" viewBox="0 0 26 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M2 11.5135L8.34615 18L24 2" stroke="#95DB59" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+                <h2 class="dm-light"><span class="dm-black">7/16</span> TOMORROW</h2>
+                <div class="reminder-card">
+                    <img src="images/template-plant.webp" alt="Plant Template Image">
+                    <h1 class="sherika">charlie</h1>
+                    <p class="dm-light">Water at <span class="dm-black">10:00am</span></p>
+                    <div>
+                        <label class="checkbox-wrapper">
+                            <input type="checkbox">
+                            <div class="custom-box">
+                                <svg width="26" height="20" viewBox="0 0 26 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M2 11.5135L8.34615 18L24 2" stroke="#95DB59" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </div>
+                        </label>
+                    </div>
+                </div>
             </div>
             <button id="all-reminders-btn">
                 <p class="sherika">see all reminders</p>
@@ -99,14 +149,148 @@
                 <h1 class="sherika">charlie</h1>
                 <p class="dm-reg">Ficus elastica</p>
                 <img src="images/template-plant.webp" alt="Plant Template Image">
-            </div>            <div>
-                <div>
-                    <p></p>
+            </div>
+            <div class="plant-btns">
+                <div id="plant-number-card">
+                    <img src="images/template-plant.webp" alt="Plant Template Image">
+                    <button id="plant-number-overlay">
+                        <h1 class="sherika">8+</h1>
+                    </button>
                 </div>
-                <button>
+                <button id="all-plants-btn">
                     <p class="sherika">all plants</p>
                 </button>
-                <button></button>
+                <button id="add-plants-btn">
+                    <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="6.42847" width="5.14286" height="18" rx="1" fill="#302231"/>
+                        <rect x="18" y="6.42859" width="5.14286" height="18" rx="1" transform="rotate(90 18 6.42859)" fill="#302231"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </section>
+    <section id="plant-screen">
+        <div id="plants-list">
+            <div class="plant-card">
+                <h1 class="sherika">charlie</h1>
+                <p class="dm-reg">Ficus elastica</p>
+                <img src="images/template-plant.webp" alt="Plant Template Image">
+            </div>
+            <div class="plant-card">
+                <h1 class="sherika">charlie</h1>
+                <p class="dm-reg">Ficus elastica</p>
+                <img src="images/template-plant.webp" alt="Plant Template Image">
+            </div>
+            <div class="plant-card">
+                <h1 class="sherika">charlie</h1>
+                <p class="dm-reg">Ficus elastica</p>
+                <img src="images/template-plant.webp" alt="Plant Template Image">
+            </div>
+            <div class="plant-card">
+                <h1 class="sherika">charlie</h1>
+                <p class="dm-reg">Ficus elastica</p>
+                <img src="images/template-plant.webp" alt="Plant Template Image">
+            </div>
+            <div class="plant-card">
+                <h1 class="sherika">charlie</h1>
+                <p class="dm-reg">Ficus elastica</p>
+                <img src="images/template-plant.webp" alt="Plant Template Image">
+            </div>
+            <div class="plant-card">
+                <h1 class="sherika">charlie</h1>
+                <p class="dm-reg">Ficus elastica</p>
+                <img src="images/template-plant.webp" alt="Plant Template Image">
+            </div>
+            <div class="plant-card">
+                <h1 class="sherika">charlie</h1>
+                <p class="dm-reg">Ficus elastica</p>
+                <img src="images/template-plant.webp" alt="Plant Template Image">
+            </div>
+            <div class="plant-card">
+                <h1 class="sherika">charlie</h1>
+                <p class="dm-reg">Ficus elastica</p>
+                <img src="images/template-plant.webp" alt="Plant Template Image">
+            </div>
+            <div class="plant-card">
+                <h1 class="sherika">charlie</h1>
+                <p class="dm-reg">Ficus elastica</p>
+                <img src="images/template-plant.webp" alt="Plant Template Image">
+            </div>
+            <div class="plant-card">
+                <h1 class="sherika">charlie</h1>
+                <p class="dm-reg">Ficus elastica</p>
+                <img src="images/template-plant.webp" alt="Plant Template Image">
+            </div>
+        </div>
+        <div id="all-plant-bottom">
+            <button id="add-plant-btn">
+                <svg width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="9.44922" y="0.571411" width="7.10204" height="24.8571" rx="1" fill="#302231"/>
+                    <rect x="25.4287" y="9.44897" width="7.10204" height="24.8571" rx="1" transform="rotate(90 25.4287 9.44897)" fill="#302231"/>
+                </svg>
+            </button>
+        </div>
+    </section>
+    <section id="plant-info">
+        <div id="plant-img">
+            <div>
+                <button id="plant-grid-btn">
+                    <svg class="grid-svg" width="21" height="21" viewBox="0 0 21 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect width="9" height="9" rx="2" fill="#95DB59"/>
+                        <rect y="12" width="9" height="9" rx="2" fill="#95DB59"/>
+                        <rect x="12" width="9" height="9" rx="2" fill="#95DB59"/>
+                        <rect x="12" y="12" width="9" height="9" rx="2" fill="#95DB59"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <div id="plant-text">
+            <div id="plant-name">
+                <h1 class="sherika">charlie</h1>
+                <button id="health-check">
+                    <svg width="28" height="29" viewBox="0 0 28 29" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M14.7817 0.165161C14.5367 0.0569522 14.2742 0 14 0C13.7258 0 13.4633 0.0569522 13.2183 0.165161L2.23419 4.71563C0.950858 5.24529 -0.00580679 6.48115 2.65328e-05 7.97329C0.0291931 13.6229 2.40919 23.9597 12.46 28.6583C13.4342 29.1139 14.5658 29.1139 15.54 28.6583C25.5966 23.9597 27.9766 13.6229 28 7.97329C28.0058 6.48115 27.0491 5.24529 25.7658 4.71563L14.7817 0.165161ZM14 7.28987C14.7758 7.28987 15.4 7.89925 15.4 8.65672C15.4 9.96092 17.0158 10.6159 17.9608 9.69324C18.5092 9.15789 19.3958 9.15789 19.9383 9.69324C20.4808 10.2286 20.4867 11.0943 19.9383 11.6239C18.9933 12.5465 19.6642 14.1241 21 14.1241C21.7758 14.1241 22.4 14.7335 22.4 15.491C22.4 16.2484 21.7758 16.8578 21 16.8578C19.6642 16.8578 18.9933 18.4354 19.9383 19.358C20.4867 19.8934 20.4867 20.759 19.9383 21.2887C19.39 21.8183 18.5033 21.824 17.9608 21.2887C17.0158 20.3661 15.4 21.021 15.4 22.3252C15.4 23.0827 14.7758 23.6921 14 23.6921C13.2242 23.6921 12.6 23.0827 12.6 22.3252C12.6 21.021 10.9842 20.3661 10.0392 21.2887C9.49084 21.824 8.60418 21.824 8.06168 21.2887C7.51918 20.7533 7.51335 19.8877 8.06168 19.358C9.00668 18.4354 8.33584 16.8578 7.00001 16.8578C6.22418 16.8578 5.60002 16.2484 5.60002 15.491C5.60002 14.7335 6.22418 14.1241 7.00001 14.1241C8.33584 14.1241 9.00668 12.5465 8.06168 11.6239C7.51335 11.0886 7.51335 10.2229 8.06168 9.69324C8.61001 9.16359 9.49668 9.15789 10.0392 9.69324C10.9842 10.6159 12.6 9.96092 12.6 8.65672C12.6 7.89925 13.2242 7.28987 14 7.28987ZM12.1333 15.0353C12.9092 15.0353 13.5333 14.426 13.5333 13.6685C13.5333 12.911 12.9092 12.3017 12.1333 12.3017C11.3575 12.3017 10.7333 12.911 10.7333 13.6685C10.7333 14.426 11.3575 15.0353 12.1333 15.0353ZM17.2667 17.3134C17.2667 16.556 16.6425 15.9466 15.8667 15.9466C15.0908 15.9466 14.4667 16.556 14.4667 17.3134C14.4667 18.0709 15.0908 18.6803 15.8667 18.6803C16.6425 18.6803 17.2667 18.0709 17.2667 17.3134Z" fill="#95DB59"/>
+                    </svg>
+                </button>
+                <p class="dm-reg">Ficus elastica</p>
+                <button id="plant-journal">
+                    <svg width="16" height="18" viewBox="0 0 16 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M13.7143 18H3.42857C1.53571 18 0 16.4883 0 14.625V3.375C0 1.51172 1.53571 0 3.42857 0H14.2857C15.2321 0 16 0.755859 16 1.6875V11.8125C16 12.5473 15.5214 13.173 14.8571 13.4051V15.75C15.4893 15.75 16 16.2527 16 16.875C16 17.4973 15.4893 18 14.8571 18H13.7143ZM3.42857 13.5C2.79643 13.5 2.28571 14.0027 2.28571 14.625C2.28571 15.2473 2.79643 15.75 3.42857 15.75H12.5714V13.5H3.42857ZM4.57143 5.34375C4.57143 5.81133 4.95357 6.1875 5.42857 6.1875H11.7143C12.1893 6.1875 12.5714 5.81133 12.5714 5.34375C12.5714 4.87617 12.1893 4.5 11.7143 4.5H5.42857C4.95357 4.5 4.57143 4.87617 4.57143 5.34375ZM5.42857 7.875C4.95357 7.875 4.57143 8.25117 4.57143 8.71875C4.57143 9.18633 4.95357 9.5625 5.42857 9.5625H11.7143C12.1893 9.5625 12.5714 9.18633 12.5714 8.71875C12.5714 8.25117 12.1893 7.875 11.7143 7.875H5.42857Z" fill="#95DB59"/>
+                    </svg>
+                    <h2 class="sherika">plant journal</p>
+                </button>
+            </div>
+            <div id="plant-care">
+                <h1 class="dm-xtra">Care Instruction</h1>
+                <p class="dm-reg">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut et massa mi. Aliquam in hendrerit urna. Pellentesque sit amet sapien fringilla, mattis ligula consectetur, ultrices mauris. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut et massa mi. Aliquam in hendrerit urna.</p>
+                <button id="more-care-btn">
+                    <svg width="11" height="18" viewBox="0 0 11 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M1.15527 1.15918C1.69259 0.613699 2.56629 0.613552 3.10352 1.15918L9.85254 8.01465C9.86691 8.02932 9.87864 8.04558 9.88867 8.0625C10.3822 8.60853 10.3694 9.45609 9.84863 9.98535L3.09961 16.8408C2.56231 17.3863 1.6886 17.3864 1.15137 16.8408C0.61628 16.2973 0.616437 15.4167 1.15137 14.873L6.93164 8.99902L1.15527 3.12695C0.62015 2.58336 0.620122 1.70275 1.15527 1.15918Z" fill="#302231" stroke="#302231" stroke-width="0.5" stroke-linejoin="round"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <div id="plant-reminders-sect">
+            <div class="plant-reminder">
+                <p class="dm-reg">Water in</p>
+                <div>
+                    <h1 class="sherika">3</h1>
+                </div>
+                <p class="dm-reg">days</p>
+            </div>
+            <div class="plant-reminder">
+                <p class="dm-reg">Rotate in</p>
+                <div>
+                    <h1 class="sherika">3</h1>
+                </div>
+                <p class="dm-reg">days</p>
+            </div>
+            <div class="plant-reminder">
+                <p class="dm-reg">Fertilize in</p>
+                <div>
+                    <h1 class="sherika">3</h1>
+                </div>
+                <p class="dm-reg">days</p>
             </div>
         </div>
     </section>
