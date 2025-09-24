@@ -7,6 +7,7 @@ body {
     margin: 0;
     padding: 0;
     background-color: #302231;
+    overflow-y: hidden;
 }
 
 .dm-light {
@@ -314,6 +315,7 @@ body {
                 grid-template-columns: 1fr;
                 grid-template-rows: min-content min-content 1fr;
                 width: 100%;
+                max-height: 230px;
                 border-radius: 9px;
                 background-color: #FCF0D9;
                 h1 {
@@ -452,6 +454,7 @@ body {
                 grid-template-columns: 1fr;
                 grid-template-rows: min-content min-content 1fr;
                 width: 100%;
+                max-height: 230px;
                 border-radius: 9px;
                 background-color: #FCF0D9;
                 h1 {
@@ -496,7 +499,7 @@ body {
             display: flex;
             justify-content: end;
             align-items: end;
-            #add-plant-btn {
+            #plant-screen-add-btn {
                 -webkit-box-shadow: 0px 0px 24px 0px rgba(38,28,39,0.83); 
                 box-shadow: 0px 0px 24px 0px rgba(38,28,39,0.83);
                 margin-bottom: 42px;
@@ -522,10 +525,10 @@ body {
         display: none;
         grid-template-rows: min-content 1fr min-content;
         height: 100%;
-        margin: 55px 35px 35px 35px;
+        margin: 45px 35px 35px 35px;
         opacity: 0;
         transition: all 0.28s ease;
-        overflow-y: scroll;
+        overflow: hidden;
         scrollbar-width: none;
         #plant-img {
             width: 100%;
@@ -696,6 +699,188 @@ body {
                         margin: 0;
                         padding: 0;
                         margin-bottom: -5px;
+                    }
+                }
+            }
+        }
+    }
+    #add-plant-card {
+        display: none;
+        z-index: 1000;
+        opacity: 0;
+        position: absolute;
+        top: 100vh;
+        bottom: auto;
+        width: 100%;
+        border-radius: 9px 9px 0 0;
+        background-color: #19101A;
+        height: min-content;
+        transition: all 0.18s ease;
+        -webkit-box-shadow: 0px 0px 24px 0px rgba(38,28,39,0.83); 
+        box-shadow: 0px 0px 24px 0px rgba(38,28,39,0.83);
+        #add-plant-close {
+            margin-top: 10px;
+            align-self: center;
+            justify-self: center;
+            /* margin: 18px 24px 42px 24px; */
+            width: calc(100% - 44px);
+            display: flex;
+            justify-content: flex-end;
+            button {
+                background-color: transparent;
+                border: none;
+                right: 24px;
+                top: 18px;
+            }
+        }
+        #add-plant-image {
+            justify-self: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            width: calc(100% - 194px);
+            margin-bottom: 45px;
+            transition: all .18s ease;
+            opacity: 1;
+                button {
+                    width: 208px;
+                    height: 42px;
+                    background-color: #302231;
+                    border: none;
+                    border-radius: 9px;
+                    display: flex;
+                    gap: 10px;
+                    align-items: center;
+                    justify-content: center;
+                    padding-top: 3px;
+                    svg {
+                        fill: #95DB59;
+                        width: 21px;
+                    }
+                    h2 {
+                        height: 23px;
+                        font-size: 21px;
+                        color: #FCF0D9;
+                        margin: 0;
+                        padding: 0;
+                    }
+                }
+                #add-camera {
+
+                }
+                #add-photo {
+
+                }
+        }
+        #add-plant-info {
+            justify-self: center;
+            display: none;
+            opacity: 0;
+            width: calc(100% - 120px);
+            transition: all .18s ease;
+            row-gap: 14px;
+            #plant-type-sect {
+                display: grid;
+                grid-template-columns: min-content 1fr;
+                grid-template-rows: min-content min-content;
+                /* row-gap: 8px; */
+                column-gap: 10px;
+                #user-photo {
+                    background-color: #302231;
+                    width: 62px;
+                    height: 62px;
+                    border-radius: 11px;
+                    grid-column: 1;
+                    grid-row: 1 / -1;
+                    display: grid;
+                    img {
+                        justify-self: center;
+                        align-self: center;
+                        border-radius: 6px;
+                        width: 80%;
+                        height: auto;
+                        aspect-ratio: 1 / 1;
+                    }
+                }
+                h2 {
+                    font-size: 18px;
+                    color: #95DB59;
+                    margin: 0;
+                    padding: 0;
+                    grid-column: 2;
+                    grid-row: 1;
+                    align-self: end;
+                }
+                p {
+                    font-size: 14px;
+                    color: #6F5D71;
+                    margin: 0;
+                    padding: 0;
+                    text-decoration: underline;
+                    grid-column: 2;
+                    grid-row: 2;
+                    align-self: start;
+                }
+            }
+            #plant-name {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                gap: 8px;
+                svg {
+
+                }
+                input {
+                    background-color: #302231;
+                    border: none;
+                    font-size: 21px;
+                    color: #FCF0D9;
+                    width: 100%;
+                    border-radius: 9px;
+                    height: 30px;
+                    padding: 6px 15px;
+                    text-transform: lowercase;
+                }
+                input::placeholder {
+                    color: #FCF0D9;
+                    opacity: 1;
+                }
+            }
+            #plant-care-text {
+                display: grid;
+                row-gap: 8px;
+                width: 100%;
+                h2 {
+                    font-size: 18px;
+                    color: #95DB59;
+                    margin: 0;
+                    padding: 0;
+                }
+                p {
+                    font-size: 12px;
+                    color: #FCF0D9;
+                    margin: 0;
+                    padding: 0;
+                }
+                button {
+                    margin-top: 10px;
+                    margin-bottom: 45px;
+                    background-color: #95DB59;
+                    border: none;
+                    width: 100%;
+                    border-radius: 9px;
+                    height: 42px;
+                    display: grid;
+                    h1 {
+                        justify-self: center;
+                        align-self: center;
+                        font-size: 21px;
+                        color: #302231;
+                        height: 23px;
+                        padding: 0;
+                        margin: 0;
                     }
                 }
             }
