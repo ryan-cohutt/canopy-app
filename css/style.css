@@ -202,6 +202,7 @@ body {
                         justify-self: start;
                         align-self: end;
                         margin-bottom: -6px;
+                        font-size: 25px;
                     }
                     p {
                         grid-column: 2;
@@ -712,7 +713,7 @@ body {
     }
     #add-plant-card {
         display: none;
-        z-index: 1000;
+        z-index: 2500;
         opacity: 0;
         position: absolute;
         top: 100vh;
@@ -891,5 +892,391 @@ body {
                 }
             }
         }
+    }
+    #reminders-screen {
+        display: none;
+        #recent-reminders-page {
+            display: flex;
+            width: 82%;
+            justify-self: center;
+            flex-direction: column;
+            gap: 6px;
+            height: 210px;
+            grid-column: 1 / -1;
+            grid-row: 1;
+            margin-top: 10px;
+            overflow-y: scroll;
+            scrollbar-width: none;
+            h2 {
+                font-size: 13px;
+                color: #FCF0D9;
+                margin: 0;
+                padding: 0;
+            }
+            .reminder-card {
+                height: 50px;
+                width: 100%;
+                background-color: #19101A;
+                display: grid;
+                grid-template-columns: min-content 1fr min-content;
+                grid-template-rows: 1fr 1fr;
+                column-gap: 8px;
+                border-radius: 9px;
+                img {
+                    height: 42px;
+                    width: auto;
+                    aspect-ratio: 1 / 1;
+                    object-fit: cover;
+                    grid-column: 1;
+                    grid-row: 1 / -1;
+                    border-radius: 6px;
+                    margin-left: 4px;
+                    align-self: center;
+                    justify-self: start;
+                }
+                h1 {
+                    grid-column: 2;
+                    grid-row: 1;
+                    color: #FCF0D9;
+                    margin: 0;
+                    padding: 0;
+                    justify-self: start;
+                    align-self: end;
+                    margin-bottom: -6px;
+                    font-size: 25px;
+                }
+                p {
+                    grid-column: 2;
+                    grid-row: 2;
+                    color: #95DB59;
+                    margin: 0;
+                    padding: 0;
+                    justify-self: start;
+                    align-self: start;
+                }
+                div {
+                    grid-column: 3;
+                    grid-row: 1 / -1;
+                    width: 42px;
+                    height: 50px;
+                    display: grid;
+                    .checkbox-wrapper {
+                        display: inline-flex;
+                        align-items: center;
+                        cursor: pointer;
+                        position: relative;
+                    }
+
+                    /* Hide the native checkbox but keep it accessible */
+                    .checkbox-wrapper input[type="checkbox"] {
+                        position: absolute;
+                        opacity: 0;
+                        width: 0;
+                        height: 0;
+                    }
+
+                    /* Custom box */
+                    .custom-box {
+                        align-self: center;
+                        justify-self: center;
+                        width: 30px;
+                        height: 30px;
+                        background: #302231;
+                        border-radius: 6px; /* makes it rounded */
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        position: relative;
+                        transition: background 0.2s ease;
+                    }
+
+                    /* The check mark SVG */
+                    .custom-box svg {
+                        position: absolute;
+                        margin-right: -12px;
+                        margin-top: -5px;
+                        width: 28px;  /* bigger than box so it "extends past" */
+                        height: 28px;
+                        fill: none;
+                        stroke: white;
+                        stroke-width: 3;
+                        stroke-linecap: round;
+                        stroke-linejoin: round;
+                        opacity: 0;
+                        transform: scale(0.8);
+                        transition: opacity 0.2s ease, transform 0.2s ease;
+                    }
+
+                    /* Show the check when checked */
+                    .checkbox-wrapper input[type="checkbox"]:checked + .custom-box svg {
+                        opacity: 1;
+                        transform: scale(1);
+                    }
+                }
+            }
+        }
+        #calendar-header {
+            justify-self: center;
+            width: 82%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #95DB59;
+            button {
+                background-color: transparent;
+                border: none;
+            }
+        }
+        #calendar-weekdays, #calendar-days {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            text-align: center;
+            color: #FCF0D9;
+            width: 82%;
+            justify-self: center;
+        }
+        hr {
+            background-color: #19101A;
+            border: none;
+            height: 3.5px;
+            border-radius: 10px;
+            width: 82%;
+        }
+        #calendar-weekdays div {
+            font-weight: bold;
+            padding: 5px 0;
+            font-size: 12px;
+        }
+        .calendar-day {
+            aspect-ratio: 1 / 1;
+            cursor: pointer;
+            position: relative;
+            color: #FCF0D9;
+            font-size: 18px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            .dots-container {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                height: 10px;
+                margin-top: -14px;
+                .dot {
+                    margin-top: 25px;
+                }
+            }
+        }
+        .calendar-day.selected {
+            background-color: #95DB59;
+            border-radius: 50%;
+            color: #19101A;
+            .dots-container {
+                .dot {
+                    display: none;
+                }
+            }
+        }
+        .dot {
+            height: 6px;
+            width: 6px;
+            background-color: #95DB59;
+            border-radius: 50%;
+            display: inline-block;
+            margin: 0 1px;
+        }
+        .dots-container {
+            margin-top: 4px;
+        }
+        #add-event-btn {
+            height: 42px;
+            border-radius: 9px;
+            background-color: #19101A;
+            border: none;
+            color: #FCF0D9;
+            font-size: 21px;
+            width: 82%;
+            justify-self: center;
+            padding-top: 6px;
+        }
+        #day-reminders {
+            margin: 10px 0 20px;
+            width: 100%;
+            justify-self: center;
+            overflow-x: hidden;
+            #day-reminder-cont {
+                display: flex;
+                gap: 12px;
+                overflow-x: scroll;
+                padding-left: 9%;
+                padding-right: 9%;
+                scrollbar-width: none;
+                #day-reminder-card {
+                    display: grid;
+                    min-width: 170px;
+                    background-color: #19101A;
+                    border-radius: 9px;
+                    h1 {
+                        margin: 0;
+                        padding: 5px 0;
+                        justify-self: center;
+                        font-size: 18px;
+                        color: #FCF0D9;
+                    }
+                    div {
+                        display: grid;
+                        background-color: #302231;
+                        margin: 0 7px 7px 7px;
+                        border-radius: 5px;
+                        h1 {
+                            margin: 0;
+                            padding: 8px 0 2px;
+                            font-size: 21px;
+                            color: #95DB59;
+                            justify-self: center;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    #add-reminder-card {
+        display: none;
+        z-index: 1000;
+        opacity: 0;
+        position: absolute;
+        top: 100vh;
+        bottom: auto;
+        width: 100%;
+        border-radius: 9px 9px 0 0;
+        background-color: #19101A;
+        height: min-content;
+        transition: all 0.18s ease;
+        -webkit-box-shadow: 0px 0px 24px 0px rgba(38,28,39,0.83); 
+        box-shadow: 0px 0px 24px 0px rgba(38,28,39,0.83);
+        #add-reminder-close {
+            margin-top: 10px;
+            align-self: center;
+            justify-self: center;
+            /* margin: 18px 24px 42px 24px; */
+            width: calc(100% - 44px);
+            display: flex;
+            justify-content: flex-end;
+            button {
+                background-color: transparent;
+                border: none;
+                right: 24px;
+                top: 18px;
+            }
+        }
+        #event-list {
+            margin-top: 15px;
+        }
+        #add-event-form {
+            justify-self: center;
+            width: 60%;
+            margin-top: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin: 20px 0 50px;
+            input {
+                margin-left: -15px;
+                background-color: #302231;
+                border: none;
+                font-size: 21px;
+                color: #FCF0D9;
+                width: 100%;
+                border-radius: 9px;
+                height: 30px;
+                padding: 6px 15px;
+                text-transform: lowercase;
+            }
+            input::placeholder {
+                color: #FCF0D9;
+                opacity: 1;
+            }
+            button {
+                width: 100%;
+                height: 42px;
+                background-color: #95DB59;
+                border: none;
+                border-radius: 9px;
+                display: flex;
+                gap: 10px;
+                align-items: center;
+                justify-content: center;
+                padding-top: 3px;
+                font-size: 21px;
+                color: #19101A;
+                margin-top: 10px;
+            }
+        }
+    }
+    #full-instructions {
+        display: none;
+        opacity: 0;
+        background-color: #19101A;
+        width: 85%;
+        height: 85%;
+        position: absolute;
+        justify-self: center;
+        align-self: center;
+        top: 10%;
+        z-index: 3000;
+        border-radius: 15px;
+        grid-template-columns: 1fr min-content;
+        grid-template-rows: min-content 1fr;
+        transition: all .15s ease;
+        h1 {
+            color: #FCF0D9;
+            font-size: 24px;
+            text-decoration: underline;
+            margin: 0;
+            align-self: center;
+            padding: 15px 20px;
+        }
+        #full-overlay {
+            z-index: 4000;
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 15px;
+            background: linear-gradient(0deg, rgba(25, 16, 26, 1) 2%, rgba(25, 16, 26, 0) 30%);
+            pointer-events: none;
+        }
+        #full-instructions-cont {
+            overflow-y: scroll;
+            grid-column: 1 / -1;
+            grid-row: 2;
+            padding: 0 20px;
+            padding-bottom: 120px;
+            #full-instructions-content {
+                color: #FCF0D9;
+                margin: 0;
+            }
+        }
+        #full-close {
+            background-color: transparent;
+            width: min-content;
+            height: min-content;
+            border: none;
+            grid-column: 2;
+            grid-row: 1;
+            align-self: center;
+            padding-right: 15px;
+        }
+    }
+    #screen-blur {
+        position: absolute;
+        display: none;
+        opacity: 0;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        z-index: 2000;
+        backdrop-filter: blur(6px);
+        transition: all .35s ease;
     }
 }
