@@ -309,6 +309,7 @@ function handleImageSelection(file) {
         const accessToken = identificationResult.access_token;
 
         let careSummary = "Care info unavailable.";
+        let careFull = "Full care info unavailable.";
 
         try {
             const careResult = await getCareInstructions(accessToken);
@@ -946,29 +947,43 @@ function displayHomeReminders(container = remindersContainer) {
 
 function addCheckboxListeners() {
   const checkboxes = document.querySelectorAll(".reminder-card input[type='checkbox']:not(:disabled)");
+
   checkboxes.forEach(cb => {
-    cb.addEventListener("change", (e) => {
-      if (cb.checked) {
-        setTimeout(() => {
-          const card = cb.closest(".reminder-card");
-          const dateStr = card.dataset.date;
-          const plantName = card.dataset.plant;
+    cb.addEventListener("change", () => {
+      const card = cb.closest(".reminder-card");
+      const dateStr = card.dataset.date;
+      const plantName = card.dataset.plant;
 
-          const reminder = events[dateStr].find(r => r.plant === plantName && !r.completed);
-          if (reminder) {
-            reminder.completed = true;
-            saveEvents();
-          }
-
-          displayHomeReminders();
-          displayHomeReminders(remindersPageContainer);
-          renderCalendar(); 
-          renderEvents();
-        }, 3000);
+      // If user unchecked the box before the timer hits: cancel completion
+      if (!cb.checked) {
+        if (cb._completeTimeout) {
+          clearTimeout(cb._completeTimeout);
+          cb._completeTimeout = null;
+        }
+        return;
       }
+
+      // If they checked it, start the 3-second completion timer
+      cb._completeTimeout = setTimeout(() => {
+        const reminder = events[dateStr].find(r => r.plant === plantName && !r.completed);
+
+        if (reminder) {
+          reminder.completed = true;
+          saveEvents();
+        }
+
+        // Update UI
+        displayHomeReminders();
+        displayHomeReminders(remindersPageContainer);
+        renderCalendar();
+        renderEvents();
+
+        cb._completeTimeout = null;
+      }, 3000);
     });
   });
 }
+
 
 
 function createReminderCard(reminder, dateStr, completed = false) {
