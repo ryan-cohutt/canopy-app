@@ -146,6 +146,55 @@ async function identifyPlant(base64Image) {
   return result;
 }
 
+function openDB() {
+  return new Promise((resolve, reject) => {
+    const request = indexedDB.open("PlantDB", 1);
+
+    request.onupgradeneeded = function (event) {
+      const db = event.target.result;
+      if (!db.objectStoreNames.contains("images")) {
+        db.createObjectStore("images");
+      }
+    };
+
+    request.onsuccess = () => resolve(request.result);
+    request.onerror = (e) => reject(e);
+  });
+}
+
+async function saveImageToDB(id, base64) {
+  const db = await openDB();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction("images", "readwrite");
+    const store = tx.objectStore("images");
+    store.put(base64, id);
+    tx.oncomplete = () => resolve();
+    tx.onerror = reject;
+  });
+}
+
+async function getImageFromDB(id) {
+  const db = await openDB();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction("images", "readonly");
+    const store = tx.objectStore("images");
+    const request = store.get(id);
+    request.onsuccess = () => resolve(request.result);
+    request.onerror = reject;
+  });
+}
+
+async function deleteImageFromDB(id) {
+  const db = await openDB();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction("images", "readwrite");
+    const store = tx.objectStore("images");
+    store.delete(id);
+    tx.oncomplete = () => resolve();
+    tx.onerror = reject;
+  });
+}
+
 function convertImageToBase64(file) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -396,7 +445,7 @@ photoInput.addEventListener("change", () => {
 });
 
 
-    savePlant.addEventListener("click", () => {
+    savePlant.addEventListener("click", async () => {
       try {
         const plantName = document.querySelector("#plant-name-input").value.trim().toLowerCase();
         if (!plantName) {
@@ -420,17 +469,22 @@ photoInput.addEventListener("change", () => {
           return;
         }
 
+        const newId = crypto.randomUUID();
+
         const newPlant = {
-            id: crypto.randomUUID(),
+            id: newId,
             name: plantName,
             species: currentPlant.species,
             careSummary: currentPlant.careSummary,
             careFull: currentPlant.careFull,
-            image: currentPlant.image,
+            imageId: newId
         };
+
+        await saveImageToDB(newPlant.imageId, currentPlant.image);
 
         savedPlants.push(newPlant);
         localStorage.setItem("savedPlants", JSON.stringify(savedPlants));
+
         displaySavedPlants();
         displayHomeReminders();
         displayHomeReminders(remindersPageContainer);
@@ -444,28 +498,31 @@ photoInput.addEventListener("change", () => {
       }
     });
 
-  function displaySavedPlants() {
-    // const homeCont = document.querySelector("#plants-home");
-    const plantCont = document.querySelector("#plants-list");
-    // homeCont.innerHTML = "";
-    plantCont.innerHTML = "";
+function displaySavedPlants() {
+  const plantCont = document.querySelector("#plants-list");
+  plantCont.innerHTML = "";
 
-    savedPlants.forEach((plant, index) => {
-      const card = document.createElement("div");
-      card.classList.add("plant-card");
-      card.innerHTML = `
-        <h1 class="sherika">${plant.name}</h1>
-        <p class="dm-reg">${plant.species}</p>
-        <img src="${plant.image}" alt="${plant.name}">
-      `;
-      card.addEventListener("click", () => {
-        openPlantInfo(plant, index);
-      });
+  savedPlants.forEach(async (plant, index) => {
+    const card = document.createElement("div");
+    card.classList.add("plant-card");
 
-    //   homeCont.appendChild(card.cloneNode(true));
-      plantCont.appendChild(card);
-    });
-  }
+    card.innerHTML = `
+      <h1 class="sherika">${plant.name}</h1>
+      <p class="dm-reg">${plant.species}</p>
+    `;
+
+    const imgEl = document.createElement("img");
+    imgEl.alt = plant.name;
+
+    const imgData = await getImageFromDB(plant.imageId);
+    imgEl.src = imgData;
+    card.appendChild(imgEl);
+
+    card.addEventListener("click", () => openPlantInfo(plant, index));
+    plantCont.appendChild(card);
+  });
+}
+
 
   function populatePlantSelect() {
     // const plantSelect = document.getElementById("plant-select");
@@ -497,7 +554,10 @@ photoInput.addEventListener("change", () => {
     document.querySelector("#plant-screen-type").textContent = plant.species;
     document.querySelector("#plant-screen-care").textContent = plant.careSummary;
     document.querySelector("#full-instructions-content").textContent = plant.careFull;
-    document.querySelector("#plant-img").style.backgroundImage = `url(${plant.image})`;
+    getImageFromDB(plant.imageId).then(base64 => {
+      document.querySelector("#plant-img").style.backgroundImage = `url(${base64})`;
+    });
+
 
     updatePlantReminders(plant.name);
 
@@ -904,38 +964,50 @@ function reminderPopup(dateStr, index) {
   })
 }
 
-function displayHomePlants() {
+async function displayHomePlants() {
   const homeCont = document.querySelector("#plants-home");
   const templateCards = Array.from(homeCont.querySelectorAll(".plant-card"));
-
   const plantCards = templateCards.slice(0, 3);
   const maxHomePlants = plantCards.length;
 
   const recentPlants = savedPlants.slice(-maxHomePlants).reverse();
 
-  plantCards.forEach((card, i) => {
+  for (let i = 0; i < plantCards.length; i++) {
+    const card = plantCards[i];
+
     if (recentPlants[i]) {
       card.querySelector("h1.sherika").textContent = recentPlants[i].name;
       card.querySelector("p.dm-reg").textContent = recentPlants[i].species;
-      card.querySelector("img").src = recentPlants[i].image;
-      card.querySelector("img").alt = recentPlants[i].name;
+
+      const imgData = await getImageFromDB(recentPlants[i].imageId);
+
+      const imgEl = card.querySelector("img");
+      if (imgData) {
+        imgEl.src = imgData;
+      } else {
+        imgEl.src = "images/template-plant.webp";
+      }
+      imgEl.alt = recentPlants[i].name;
+
       card.classList.remove("template-card");
       const plantIndex = savedPlants.findIndex(p => p.id === recentPlants[i].id);
       card.onclick = () => openPlantInfo(recentPlants[i], plantIndex);
     } else {
       card.querySelector("h1.sherika").textContent = "Plant Name";
       card.querySelector("p.dm-reg").textContent = "Species";
-      card.querySelector("img").src = "images/template-plant.webp";
-      card.querySelector("img").alt = "Plant Template Image";
+      const imgEl = card.querySelector("img");
+      imgEl.src = "images/template-plant.webp";
+      imgEl.alt = "Plant Template Image";
       card.classList.add("template-card");
       card.onclick = null;
     }
-  });
+  }
 }
 
 
 
-function displayHomeReminders(container = remindersContainer) {
+
+async function displayHomeReminders(container = remindersContainer) {
   container.innerHTML = "";
 
   let allCompleted = [];
@@ -945,12 +1017,11 @@ function displayHomeReminders(container = remindersContainer) {
   const tomorrow = new Date(today);
   tomorrow.setDate(today.getDate() + 1);
 
-  eventDates.forEach(dateStr => {
+  for (const dateStr of eventDates) {
     const [y, m, d] = dateStr.split("-").map(Number);
     const date = new Date(y, m - 1, d);
 
     let headerText = "";
-
     const formattedDate = `${date.getMonth() + 1}/${date.getDate()}`;
 
     if (date.toDateString() === today.toDateString()) {
@@ -970,24 +1041,53 @@ function displayHomeReminders(container = remindersContainer) {
       dateHeader.innerHTML = `<span class="dm-black">${formattedDate}</span> ${headerText.replace(formattedDate, "").trim()}`;
       container.appendChild(dateHeader);
 
-      incompleteReminders.forEach(reminder => container.appendChild(createReminderCard(reminder, dateStr)));
+      for (const reminder of incompleteReminders) {
+        const reminderCard = createReminderCard(reminder, dateStr);
+        container.appendChild(reminderCard);
+
+        const plant = savedPlants.find(p => p.name === reminder.plant);
+        if (plant && plant.imageId) {
+          try {
+            const imgData = await getImageFromDB(plant.imageId);
+            const imgEl = reminderCard.querySelector("img");
+            if (imgEl) imgEl.src = imgData || "images/template-plant.webp";
+          } catch (err) {
+            console.warn("Failed to load plant image from DB:", err);
+          }
+        }
+      }
     }
 
     allCompleted.push(...completedReminders.map(r => ({ ...r, dateStr })));
-  });
+  }
 
   if (allCompleted.length) {
     const completedHeader = document.createElement("h2");
     completedHeader.textContent = "Completed";
     completedHeader.style.color = "#95DB59";
-    completedHeader.classList.add("dm-xtra")
+    completedHeader.classList.add("dm-xtra");
     container.appendChild(completedHeader);
 
-    allCompleted.forEach(reminder => container.appendChild(createReminderCard(reminder, reminder.dateStr, true)));
+    for (const reminder of allCompleted) {
+      const reminderCard = createReminderCard(reminder, reminder.dateStr, true);
+      container.appendChild(reminderCard);
+
+      const plant = savedPlants.find(p => p.name === reminder.plant);
+      if (plant && plant.imageId) {
+        try {
+          const imgData = await getImageFromDB(plant.imageId);
+          const imgEl = reminderCard.querySelector("img");
+          if (imgEl) imgEl.src = imgData || "images/template-plant.webp";
+        } catch (err) {
+          console.warn("Failed to load plant image from DB:", err);
+        }
+      }
+    }
   }
 
   addCheckboxListeners();
 }
+
 
 
 function addCheckboxListeners() {
@@ -1032,9 +1132,6 @@ function addCheckboxListeners() {
 
 
 function createReminderCard(reminder, dateStr, completed = false) {
-  const plant = savedPlants.find(p => p.name === reminder.plant);
-  const plantImage = plant ? plant.image : "images/template-plant.webp";
-
   const reminderCard = document.createElement("div");
   reminderCard.classList.add("reminder-card");
 
@@ -1044,7 +1141,7 @@ function createReminderCard(reminder, dateStr, completed = false) {
   reminderCard.dataset.plant = reminder.plant;
 
   reminderCard.innerHTML = `
-    <img src="${plantImage}" alt="${reminder.plant}">
+    <img src="images/template-plant.webp" alt="${reminder.plant}">
     <h1 class="sherika">${reminder.plant}</h1>
     <p class="dm-light">${reminder.type} at <span class="dm-black">${reminder.time}</span></p>
     <div>
@@ -1060,6 +1157,7 @@ function createReminderCard(reminder, dateStr, completed = false) {
   `;
   return reminderCard;
 }
+
 
 function updatePlantReminders(plantName) {
   const remindersSect = document.querySelector("#plant-reminders-sect");
