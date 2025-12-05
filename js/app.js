@@ -286,6 +286,7 @@ window.addEventListener("load", () => {
   addPlantBtn.addEventListener("click", openAddPlant);
   addPlantBtn2.addEventListener("click", openAddPlant);
   function openAddPlant() {
+    currentPlant = {};
     addPlantCard.style.display = "grid";
     setTimeout(() => {
         addPlantCard.style.opacity = "1";
