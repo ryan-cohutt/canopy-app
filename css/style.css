@@ -2,6 +2,7 @@ html {
     margin: 0;
     padding: 0;
     overflow: hidden;
+    height: 100vh;
 }
 
 body {
@@ -9,6 +10,7 @@ body {
     padding: 0;
     background-color: #302231;
     overflow-y: hidden;
+    height: 100vh;
 }
 
 .dm-light {
