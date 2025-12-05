@@ -146,6 +146,51 @@ async function identifyPlant(base64Image) {
   return result;
 }
 
+function resizeAndCompressImage(file, maxWidth = 800, maxHeight = 800, quality = 0.7) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => {
+      let { width, height } = img;
+
+      if (width > height) {
+        if (width > maxWidth) {
+          height *= maxWidth / width;
+          width = maxWidth;
+        }
+      } else {
+        if (height > maxHeight) {
+          width *= maxHeight / height;
+          height = maxHeight;
+        }
+      }
+
+      const canvas = document.createElement("canvas");
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext("2d");
+      ctx.drawImage(img, 0, 0, width, height);
+
+      canvas.toBlob(
+        (blob) => {
+          const reader = new FileReader();
+          reader.onloadend = () => resolve(reader.result);
+          reader.onerror = reject;
+          reader.readAsDataURL(blob);
+        },
+        "image/jpeg",
+        quality
+      );
+    };
+    img.onerror = reject;
+
+    const reader = new FileReader();
+    reader.onload = () => (img.src = reader.result);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+
 function openDB() {
   return new Promise((resolve, reject) => {
     const request = indexedDB.open("PlantDB", 1);
@@ -397,12 +442,17 @@ function handleImageSelection(file) {
           console.warn("Care instructions/paragraph failed:", err);
         }
 
+        const thumbBase64 = await resizeAndCompressImage(file, 150, 150, 0.5);
+        const mainBase64 = await resizeAndCompressImage(file, 800, 800, 0.7);
+
         currentPlant = {
           species: topSuggestion.name,
           careSummary,
           careFull,
-          image: "data:image/jpeg;base64," + base64Image,
+          imageMain: mainBase64,
+          imageThumb: thumbBase64
         };
+
 
         loader.style.opacity = "0";
         setTimeout(() => {
@@ -464,7 +514,7 @@ photoInput.addEventListener("change", () => {
         //   return;
         // }
 
-        if (!currentPlant || !currentPlant.species || !currentPlant.image) {
+        if (!currentPlant || !currentPlant.species || !currentPlant.imageMain || !currentPlant.imageThumb) {
           alert("The plant has not finished loading or failed to identify. Please try again.");
           return;
         }
@@ -480,7 +530,8 @@ photoInput.addEventListener("change", () => {
             imageId: newId
         };
 
-        await saveImageToDB(newPlant.imageId, currentPlant.image);
+        await saveImageToDB(newPlant.imageId + "_main", currentPlant.imageMain);
+        await saveImageToDB(newPlant.imageId + "_thumb", currentPlant.imageThumb);
 
         savedPlants.push(newPlant);
         localStorage.setItem("savedPlants", JSON.stringify(savedPlants));
@@ -514,8 +565,9 @@ function displaySavedPlants() {
     const imgEl = document.createElement("img");
     imgEl.alt = plant.name;
 
-    const imgData = await getImageFromDB(plant.imageId);
+    const imgData = await getImageFromDB(plant.imageId + "_main");
     imgEl.src = imgData;
+
     card.appendChild(imgEl);
 
     card.addEventListener("click", () => openPlantInfo(plant, index));
@@ -554,7 +606,7 @@ function displaySavedPlants() {
     document.querySelector("#plant-screen-type").textContent = plant.species;
     document.querySelector("#plant-screen-care").textContent = plant.careSummary;
     document.querySelector("#full-instructions-content").textContent = plant.careFull;
-    getImageFromDB(plant.imageId).then(base64 => {
+    getImageFromDB(plant.imageId + "_main").then(base64 => {
       document.querySelector("#plant-img").style.backgroundImage = `url(${base64})`;
     });
 
@@ -976,7 +1028,7 @@ async function displayHomePlants() {
       card.querySelector("h1.sherika").textContent = recentPlants[i].name;
       card.querySelector("p.dm-reg").textContent = recentPlants[i].species;
 
-      const imgData = await getImageFromDB(recentPlants[i].imageId);
+      const imgData = await getImageFromDB(recentPlants[i].imageId + "_main");
 
       const imgEl = card.querySelector("img");
       if (imgData) {
@@ -1045,7 +1097,7 @@ async function displayHomeReminders(container = remindersContainer) {
         const plant = savedPlants.find(p => p.name === reminder.plant);
         if (plant && plant.imageId) {
           try {
-            const imgData = await getImageFromDB(plant.imageId);
+            const imgData = await getImageFromDB(plant.imageId + "_thumb");
             const imgEl = reminderCard.querySelector("img");
             if (imgEl) imgEl.src = imgData || "images/template-plant.webp";
           } catch (err) {
@@ -1072,7 +1124,7 @@ async function displayHomeReminders(container = remindersContainer) {
       const plant = savedPlants.find(p => p.name === reminder.plant);
       if (plant && plant.imageId) {
         try {
-          const imgData = await getImageFromDB(plant.imageId);
+          const imgData = await getImageFromDB(plant.imageId + "_thumb");
           const imgEl = reminderCard.querySelector("img");
           if (imgEl) imgEl.src = imgData || "images/template-plant.webp";
         } catch (err) {
