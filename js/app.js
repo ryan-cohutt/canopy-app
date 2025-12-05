@@ -1140,9 +1140,16 @@ async function displayHomeReminders(container = remindersContainer) {
 
 
 function addCheckboxListeners() {
-  const checkboxes = document.querySelectorAll(".reminder-card input[type='checkbox']:not(:disabled)");
+  const checkboxes = document.querySelectorAll(".reminder-card input[type='checkbox']");
 
   checkboxes.forEach(cb => {
+    cb.replaceWith(cb.cloneNode(true));
+  });
+
+  const freshCheckboxes = document.querySelectorAll(".reminder-card input[type='checkbox']");
+
+  freshCheckboxes.forEach(cb => {
+    cb._completeTimeout = null;
     cb.addEventListener("change", () => {
       const card = cb.closest(".reminder-card");
       const dateStr = card.dataset.date;
@@ -1174,6 +1181,7 @@ function addCheckboxListeners() {
     });
   });
 }
+
 
 
 
