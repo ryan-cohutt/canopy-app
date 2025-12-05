@@ -285,13 +285,17 @@ window.addEventListener("load", () => {
 
   addPlantBtn.addEventListener("click", openAddPlant);
   addPlantBtn2.addEventListener("click", openAddPlant);
+
   function openAddPlant() {
     currentPlant = {};
+    document.querySelector("#plant-name-input").value = "";
+    addPlantInfo.style.display = "none";
+    addPlantImage.style.display = "grid";
     addPlantCard.style.display = "grid";
     setTimeout(() => {
-        addPlantCard.style.opacity = "1";
-        addPlantCard.style.bottom = "0";
-        addPlantCard.style.top = 'auto';
+      addPlantCard.style.opacity = "1";
+      addPlantCard.style.bottom = "0";
+      addPlantCard.style.top = 'auto';
     }, 300);
   }
 
@@ -377,43 +381,49 @@ photoInput.addEventListener("change", () => {
 });
 
 
-    savePlant.addEventListener("click", () => {
-        const plantName = document.querySelector("#plant-name-input").value.trim().toLowerCase();
-        if (!plantName) {
-            alert("Please give your plant a name!");
-            return;
-        }
+  savePlant.addEventListener("click", () => {
+    const plantNameInput = document.querySelector("#plant-name-input");
+    const plantName = plantNameInput.value.trim().toLowerCase();
 
-        // const duplicate = savedPlants.some(p =>
-        //   p &&
-        //   typeof p.name === "string" &&
-        //   p.name.trim().toLowerCase() === plantName.trim().toLowerCase()
-        // );
+    if (!plantName) {
+      alert("Please give your plant a name!");
+      return;
+    }
 
-        // if (duplicate) {
-        //   alert("You already have a plant with that name. Please choose a different name.");
-        //   return;
-        // }
+    if (!currentPlant.image || !currentPlant.species) {
+      alert("Please identify your plant by adding a photo before saving.");
+      return;
+    }
 
-        const newPlant = {
-            id: crypto.randomUUID(),
-            name: plantName,
-            species: currentPlant.species,
-            careSummary: currentPlant.careSummary,
-            careFull: currentPlant.careFull,
-            image: currentPlant.image,
-        };
+    const newPlant = {
+      id: crypto.randomUUID(),
+      name: plantName,
+      species: currentPlant.species,
+      careSummary: currentPlant.careSummary,
+      careFull: currentPlant.careFull,
+      image: currentPlant.image,
+    };
 
-        savedPlants.push(newPlant);
-        localStorage.setItem("savedPlants", JSON.stringify(savedPlants));
-        displaySavedPlants();
-        displayHomeReminders();
-        displayHomeReminders(remindersPageContainer);
-        populatePlantSelect();
-        displayHomePlants();
+    savedPlants.push(newPlant);
+    localStorage.setItem("savedPlants", JSON.stringify(savedPlants));
 
-        openPlantInfo(newPlant, savedPlants.length - 1);
-    });
+    displaySavedPlants();
+    displayHomeReminders();
+    displayHomeReminders(remindersPageContainer);
+    populatePlantSelect();
+    displayHomePlants();
+
+    openPlantInfo(newPlant, savedPlants.length - 1);
+
+    plantNameInput.value = "";
+    currentPlant = {};
+    addPlantCard.style.opacity = "0";
+    setTimeout(() => {
+      addPlantCard.style.display = "none";
+      addPlantInfo.style.display = "none";
+      addPlantImage.style.display = "grid";
+    }, 300);
+  });
 
   function displaySavedPlants() {
     // const homeCont = document.querySelector("#plants-home");
