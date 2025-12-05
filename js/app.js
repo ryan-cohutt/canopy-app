@@ -382,7 +382,7 @@ function handleImageSelection(file) {
   
       cameraInput.value = "";
       photoInput.value = "";
-      fileInput.value = "";
+      // fileInput.value = "";
     }
   });
 }
