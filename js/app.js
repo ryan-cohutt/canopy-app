@@ -42,6 +42,8 @@ let reminderCardClose = document.querySelector('#reminder-card-close')
 let remindersContainer = document.querySelector("#recent-reminders");
 let remindersPageContainer = document.querySelector("#recent-reminders-page");
 let plantLoading = document.querySelector("#plant-loading")
+let settingsBtn = document.querySelector("#gear-btn")
+let settingsIcon =document.querySelector("#settings-icon")
 
 const plantSelect = document.getElementById("plant-select");
 const selectedName = document.getElementById("selected-plant-name");
@@ -59,7 +61,7 @@ const eventTitleInput = document.getElementById('event-title');
 const eventTimeInput = document.getElementById('event-time');
 const saveEventBtn = document.getElementById('save-event-btn');
 
-const TEST_MODE = true
+let TEST_MODE = false
 
 let selectedPlant = ""
 
@@ -247,6 +249,17 @@ window.addEventListener("load", () => {
       }, 50);
     }, 800);
   });
+
+  settingsBtn.addEventListener("click", () => {
+    if (TEST_MODE == false) {
+      settingsIcon.style.fill = '#95DB59'
+      TEST_MODE = true
+    } else if (TEST_MODE == true) {
+      settingsIcon.style.fill = '#FCF0D9'
+      TEST_MODE = false
+    }
+    console.log(TEST_MODE)
+  })
 
   allPlantBtn.addEventListener("click", () => switchScreens(homeScreen, plantScreen));
   plantAmountOverlay.addEventListener("click", () => switchScreens(homeScreen, plantScreen));
