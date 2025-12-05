@@ -363,22 +363,22 @@ photoInput.addEventListener("change", () => {
 
 
     savePlant.addEventListener("click", () => {
-        const plantName = document.querySelector("#plant-name-input").value.trim();
+        const plantName = document.querySelector("#plant-name-input").value.trim().toLowerCase();
         if (!plantName) {
             alert("Please give your plant a name!");
             return;
         }
 
-        const duplicate = savedPlants.some(p =>
-          p &&
-          typeof p.name === "string" &&
-          p.name.trim().toLowerCase() === plantName.trim().toLowerCase()
-        );
+        // const duplicate = savedPlants.some(p =>
+        //   p &&
+        //   typeof p.name === "string" &&
+        //   p.name.trim().toLowerCase() === plantName.trim().toLowerCase()
+        // );
 
-        if (duplicate) {
-          alert("You already have a plant with that name. Please choose a different name.");
-          return;
-        }
+        // if (duplicate) {
+        //   alert("You already have a plant with that name. Please choose a different name.");
+        //   return;
+        // }
 
         const newPlant = {
             id: crypto.randomUUID(),
