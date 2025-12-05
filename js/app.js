@@ -636,7 +636,6 @@ function renderCalendar() {
   monthYearEl.textContent = currentDate.toLocaleString('default', { month: 'long', year: 'numeric' });
   calendarDaysEl.innerHTML = '';
 
-  // Blank days before first day
   for (let i = 0; i < startDayIndex; i++) {
     const blankDiv = document.createElement('div');
     calendarDaysEl.appendChild(blankDiv);
@@ -648,12 +647,10 @@ function renderCalendar() {
     const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
     dayDiv.dataset.date = dateStr;
 
-    // Day number
     const dayNumber = document.createElement('div');
     dayNumber.textContent = day;
     dayDiv.appendChild(dayNumber);
 
-    // Dot with number inside
     const eventCount = events[dateStr]?.length || 0;
     if (eventCount > 0) {
       const dot = document.createElement('div');
@@ -1099,7 +1096,6 @@ function addCheckboxListeners() {
       const dateStr = card.dataset.date;
       const plantName = card.dataset.plant;
 
-      // If user unchecked the box before the timer hits: cancel completion
       if (!cb.checked) {
         if (cb._completeTimeout) {
           clearTimeout(cb._completeTimeout);
@@ -1108,7 +1104,6 @@ function addCheckboxListeners() {
         return;
       }
 
-      // If they checked it, start the 3-second completion timer
       cb._completeTimeout = setTimeout(() => {
         const reminder = events[dateStr].find(r => r.plant === plantName && !r.completed);
 
@@ -1117,7 +1112,6 @@ function addCheckboxListeners() {
           saveEvents();
         }
 
-        // Update UI
         displayHomeReminders();
         displayHomeReminders(remindersPageContainer);
         renderCalendar();
