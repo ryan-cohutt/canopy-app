@@ -258,6 +258,7 @@ window.addEventListener("load", () => {
       settingsIcon.style.fill = '#FCF0D9'
       TEST_MODE = false
     }
+    currentPlant = {};
     console.log(TEST_MODE)
   })
 
@@ -293,7 +294,7 @@ window.addEventListener("load", () => {
     document.querySelector("#plant-type").textContent = "";
     document.querySelector("#plant-care-output").textContent = "";
     document.querySelector("#full-instructions-content").textContent = "";
-    
+
     addPlantCard.style.display = "grid";
     addPlantInfo.style.display = "none";
     addPlantImage.style.display = "grid";
@@ -372,6 +373,7 @@ function handleImageSelection(file) {
         alert("Plant could not be identified.");
       }
     } catch (err) {
+      currentPlant = {};
       loader.style.display = "none";
       addPlantImage.style.display = "grid";
       console.error("Plant identification failed:", err);
@@ -395,6 +397,7 @@ photoInput.addEventListener("change", () => {
 
 
     savePlant.addEventListener("click", () => {
+      try {
         const plantName = document.querySelector("#plant-name-input").value.trim().toLowerCase();
         if (!plantName) {
             alert("Please give your plant a name!");
@@ -411,6 +414,11 @@ photoInput.addEventListener("change", () => {
         //   alert("You already have a plant with that name. Please choose a different name.");
         //   return;
         // }
+
+        if (!currentPlant || !currentPlant.species || !currentPlant.image) {
+          alert("The plant has not finished loading or failed to identify. Please try again.");
+          return;
+        }
 
         const newPlant = {
             id: crypto.randomUUID(),
@@ -430,6 +438,10 @@ photoInput.addEventListener("change", () => {
         displayHomePlants();
 
         openPlantInfo(newPlant, savedPlants.length - 1);
+      } catch (err) {
+        console.error("Save failed:", err);
+        alert("Could not save plant. Try again.");
+      }
     });
 
   function displaySavedPlants() {
