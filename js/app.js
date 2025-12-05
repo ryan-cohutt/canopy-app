@@ -286,6 +286,14 @@ window.addEventListener("load", () => {
   addPlantBtn.addEventListener("click", openAddPlant);
   addPlantBtn2.addEventListener("click", openAddPlant);
   function openAddPlant() {
+    currentPlant = {};
+    document.querySelector("#plant-name-input").value = "";
+    document.querySelector("#user-photo").innerHTML = "";
+    document.querySelector("#image-name").textContent = "";
+    document.querySelector("#plant-type").textContent = "";
+    document.querySelector("#plant-care-output").textContent = "";
+    document.querySelector("#full-instructions-content").textContent = "";
+    
     addPlantCard.style.display = "grid";
     addPlantInfo.style.display = "none";
     addPlantImage.style.display = "grid";
@@ -367,6 +375,12 @@ function handleImageSelection(file) {
       loader.style.display = "none";
       addPlantImage.style.display = "grid";
       console.error("Plant identification failed:", err);
+    } finally {
+      document.querySelector("#plant-name-input").value = "";
+  
+      cameraInput.value = "";
+      photoInput.value = "";
+      fileInput.value = "";
     }
   });
 }
