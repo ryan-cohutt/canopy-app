@@ -226,7 +226,6 @@ body {
                             position: relative;
                         }
 
-                        /* Hide the native checkbox but keep it accessible */
                         .checkbox-wrapper input[type="checkbox"] {
                             position: absolute;
                             opacity: 0;
@@ -234,14 +233,13 @@ body {
                             height: 0;
                         }
 
-                        /* Custom box */
                         .custom-box {
                             align-self: center;
                             justify-self: center;
                             width: 30px;
                             height: 30px;
                             background: #302231;
-                            border-radius: 6px; /* makes it rounded */
+                            border-radius: 6px;
                             display: flex;
                             align-items: center;
                             justify-content: center;
@@ -249,12 +247,11 @@ body {
                             transition: background 0.2s ease;
                         }
 
-                        /* The check mark SVG */
                         .custom-box svg {
                             position: absolute;
                             margin-right: -12px;
                             margin-top: -5px;
-                            width: 28px;  /* bigger than box so it "extends past" */
+                            width: 28px;
                             height: 28px;
                             fill: none;
                             stroke: white;
@@ -266,7 +263,6 @@ body {
                             transition: opacity 0.2s ease, transform 0.2s ease;
                         }
 
-                        /* Show the check when checked */
                         .checkbox-wrapper input[type="checkbox"]:checked + .custom-box svg {
                             opacity: 1;
                             transform: scale(1);
@@ -348,6 +344,9 @@ body {
                     border-radius: 6px;
                     margin-bottom: 3px;
                 }
+            }
+            .template-card {
+                opacity: 0;
             }
             .plant-btns {
                 display: grid;
@@ -538,7 +537,9 @@ body {
             border-radius: 35px;
             background-image: url("/images/template-plant.webp");
             background-size: cover;
-            div {
+            display: flex;
+            justify-content: space-between;
+            #plant-grid-cont {
                 margin-top: 16px;
                 margin-left: 16px;
                 width: 43px;
@@ -548,7 +549,7 @@ body {
                 justify-content: center;
                 align-items: center;
                 background-color: #19101A;
-                button {
+                #plant-grid-btn {
                     margin: 2px 0 0 1px;
                     background: transparent;
                     border: none;
@@ -556,6 +557,27 @@ body {
                     justify-self: start;
                     .grid-svg {
                         fill: #95DB59;
+                    }
+                }
+            }
+            #plant-delete-cont {            
+                margin-top: 16px;
+                margin-right: 16px;
+                width: 43px;
+                height: 43px;
+                border-radius: 14px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                background-color: #95DB59;
+                #plant-delete-btn {
+                    margin: 2px 0 0 1px;
+                    background: transparent;
+                    border: none;
+                    width: min-content;
+                    justify-self: end;
+                    .delete-svg {
+                        fill: #19101A;
                     }
                 }
             }
@@ -781,6 +803,20 @@ body {
 
                 }
         }
+        #plant-loading {
+            display: none;
+            opacity: 0;
+            transition: all .2s ease;
+            justify-items: center;
+            padding-bottom: 30px;
+            div {
+                display: grid;
+                justify-items: center;
+            }
+            p {
+                color: #FCF0D9;
+            }
+        }
         #add-plant-info {
             justify-self: center;
             display: none;
@@ -896,6 +932,7 @@ body {
     #reminders-screen {
         display: none;
         #recent-reminders-page {
+            anchor-name: --recent-reminders-page;
             display: flex;
             width: 82%;
             justify-self: center;
@@ -967,7 +1004,6 @@ body {
                         position: relative;
                     }
 
-                    /* Hide the native checkbox but keep it accessible */
                     .checkbox-wrapper input[type="checkbox"] {
                         position: absolute;
                         opacity: 0;
@@ -975,14 +1011,13 @@ body {
                         height: 0;
                     }
 
-                    /* Custom box */
                     .custom-box {
                         align-self: center;
                         justify-self: center;
                         width: 30px;
                         height: 30px;
                         background: #302231;
-                        border-radius: 6px; /* makes it rounded */
+                        border-radius: 6px;
                         display: flex;
                         align-items: center;
                         justify-content: center;
@@ -990,12 +1025,11 @@ body {
                         transition: background 0.2s ease;
                     }
 
-                    /* The check mark SVG */
                     .custom-box svg {
                         position: absolute;
                         margin-right: -12px;
                         margin-top: -5px;
-                        width: 28px;  /* bigger than box so it "extends past" */
+                        width: 28px;
                         height: 28px;
                         fill: none;
                         stroke: white;
@@ -1007,7 +1041,6 @@ body {
                         transition: opacity 0.2s ease, transform 0.2s ease;
                     }
 
-                    /* Show the check when checked */
                     .checkbox-wrapper input[type="checkbox"]:checked + .custom-box svg {
                         opacity: 1;
                         transform: scale(1);
@@ -1112,7 +1145,7 @@ body {
                 padding-left: 9%;
                 padding-right: 9%;
                 scrollbar-width: none;
-                #day-reminder-card {
+                .day-reminder-card {
                     display: grid;
                     min-width: 170px;
                     background-color: #19101A;
@@ -1181,6 +1214,44 @@ body {
             flex-direction: column;
             gap: 10px;
             margin: 20px 0 50px;
+            gap: 20px;
+            #event-type {
+                display: grid;
+                grid-template-columns: 1fr 1fr 1fr;
+                column-gap: 2px;
+                button {
+                    background-color: #302231;
+                    color: #FCF0D9;
+                    border: none;
+                    font-size: 16px;
+                    padding: 12px 0;
+                }
+                button.selected {
+                    background-color: #95DB59 !important;
+                    color: #19101A;
+                }
+                button:first-child {
+                    border-radius: 8px 0 0 8px;
+                }
+                button:last-child {
+                    border-radius: 0px 8px 8px 0px;
+                }
+            }
+            select {
+                border: none;
+                background-color: #FCF0D9;
+                padding: 10px 0 8px 10px;
+                font-size: 20px;
+                border-radius: 8px;
+                appearance: none;
+                option {
+                    font-size: 16px;
+                    hyphens: none;
+                }
+                option:default {
+                    hyphens: none;
+                }
+            }
             input {
                 margin-left: -15px;
                 background-color: #302231;
@@ -1197,7 +1268,7 @@ body {
                 color: #FCF0D9;
                 opacity: 1;
             }
-            button {
+            #save-event-btn {
                 width: 100%;
                 height: 42px;
                 background-color: #95DB59;
@@ -1279,4 +1350,144 @@ body {
         backdrop-filter: blur(6px);
         transition: all .35s ease;
     }
+    #plant-delete-card {
+        display: none;
+        opacity: 0;
+        position: absolute;
+        align-self: center;
+        justify-self: center;
+        top: 50%;
+        background-color: #19101A;
+        color: #FCF0D9;
+        justify-items: center;
+        row-gap: 15px;
+        column-gap: 15px;
+        border-radius: 16px;
+        padding: 27px 32px;
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: 1fr min-content;
+        z-index: 3000;
+        transition: all .2s ease;
+        p {
+            margin: 0;
+            font-size: 18px;
+            padding-bottom: 5px;
+            grid-column: 1 / -1;
+            grid-row: 1;
+        }
+        button {
+            width: 100px;
+            border: none;
+            font-size: 16px;
+            padding: 9px 0;
+            border-radius: 6px;
+            margin: 0;
+            letter-spacing: 0.8px;
+        }
+        #no-delete-btn {
+            background-color: #FCF0D9;
+            color: #19101A;
+        }
+        #yes-delete-btn {
+            background-color: rgb(184, 23, 76);
+            color: #FCF0D9;
+        }
+    }
+    #reminder-edit-card {
+        display: none;
+        opacity: 0;
+        position: absolute;
+        align-self: center;
+        justify-self: center;
+        top: 50%;
+        background-color: #19101A;
+        color: #FCF0D9;
+        justify-items: center;
+        row-gap: 15px;
+        column-gap: 15px;
+        border-radius: 16px;
+        padding: 27px 32px;
+        grid-template-columns: 1fr 1fr;
+        z-index: 3000;
+        transition: all .2s ease;
+        button {
+            width: 100px;
+            border: none;
+            font-size: 16px;
+            padding: 9px 0;
+            border-radius: 6px;
+            margin: 0;
+            letter-spacing: 0.8px;
+        }
+        #reminder-card-close {
+            background-color: #FCF0D9;
+            color: #19101A;
+        }
+        #reminder-delete-btn {
+            background-color: rgb(184, 23, 76);
+            color: #FCF0D9;
+        }
+    }
+}
+
+input[type="time"]::-webkit-calendar-picker-indicator {
+    opacity: 0;
+}
+
+input[type="time"] {
+    background-image: url("../images/clock.svg");
+    background-repeat: no-repeat;
+    background-position: calc(100% - 10px);
+    background-size: 30px;
+    padding-right: 30px;
+}
+
+#fade-overlay-1 {
+  position: absolute;
+  align-self: end;
+  justify-self: center;
+  margin-bottom: 50px;
+  width: 100%;
+  height: 50px;
+  z-index: 4000;
+  pointer-events: none;
+  background: linear-gradient(0deg,rgba(48, 34, 49, 1) 0%, rgba(48, 34, 49, 0) 46%);
+}
+
+#fade-overlay-2 {
+  position: absolute;
+  align-self: start;
+  justify-self: center;
+  position-anchor: --recent-reminders-page;
+  margin-top: calc(anchor-size(height) - 39px);
+  width: 100%;
+  height: 50px;
+  z-index: 4000;
+  pointer-events: none;
+  background: linear-gradient(0deg,rgba(48, 34, 49, 1) 0%, rgba(48, 34, 49, 0) 46%);
+}
+
+.dot-number {
+    position: absolute;
+    bottom: 4px;
+    right: 4px;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background-color: #95DB59;
+    color: #19101A;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.calendar-day.selected .dot-number {
+  display: none;
+}
+
+.completed-dot {
+    background-color: #19101A;
+    color: #95DB59;
 }
