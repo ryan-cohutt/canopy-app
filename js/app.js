@@ -78,7 +78,14 @@ let savedPlants = JSON.parse(localStorage.getItem('savedPlants')) || [];
 let events = JSON.parse(localStorage.getItem('events')) || {};
 let currentPlant = {};
 
+savedPlants = savedPlants.filter(p =>
+  p && typeof p === "object" && p.name && typeof p.name === "string"
+);
+
 let didUpgrade = false;
+
+localStorage.setItem("savedPlants", JSON.stringify(savedPlants));
+
 
 savedPlants.forEach(p => {
   if (!p.id) {
@@ -339,7 +346,12 @@ photoInput.addEventListener("change", () => {
             return;
         }
 
-        const duplicate = savedPlants.some(p => p.name.toLowerCase() === plantName.toLowerCase());
+        const duplicate = savedPlants.some(p =>
+          p &&
+          typeof p.name === "string" &&
+          p.name.trim().toLowerCase() === plantName.trim().toLowerCase()
+        );
+
         if (duplicate) {
           alert("You already have a plant with that name. Please choose a different name.");
           return;
