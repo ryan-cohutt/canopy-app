@@ -59,6 +59,8 @@ const eventTitleInput = document.getElementById('event-title');
 const eventTimeInput = document.getElementById('event-time');
 const saveEventBtn = document.getElementById('save-event-btn');
 
+const TEST_MODE = true
+
 let selectedPlant = ""
 
 const buttons = document.querySelectorAll(".event-type-btn");
@@ -108,6 +110,19 @@ if ("serviceWorker" in navigator) {
 }
 
 async function identifyPlant(base64Image) {
+  if (TEST_MODE) {
+    return {
+      access_token: "fake_token_123",
+      result: {
+        classification: {
+          suggestions: [
+            { name: "Test Planticus Debuggaria" }
+          ]
+        }
+      }
+    };
+  }
+
   const apiKey = "Nq40v3XjyfBITZVmd44xhOYuC6I8YYF8AvJGTsYXoP9h3lA48r"; 
   const apiUrl = "https://plant.id/api/v3/identification";
 
@@ -139,6 +154,10 @@ function convertImageToBase64(file) {
 }
 
 async function getCareInstructions(accessToken) {
+  if (TEST_MODE) {
+    return "Water moderately and keep in indirect light.";
+  }
+
   const apiKey = "Nq40v3XjyfBITZVmd44xhOYuC6I8YYF8AvJGTsYXoP9h3lA48r";
   const url = `https://plant.id/api/v3/identification/${accessToken}/conversation`;
 
@@ -173,6 +192,10 @@ async function getCareInstructions(accessToken) {
 }
 
 async function getCareParagraph(accessToken) {
+  if (TEST_MODE) {
+    return "This is a longer care paragraph for testing purposes. It explains how to care for the plant, but without calling any real API.";
+  }
+  
   const apiKey = "Nq40v3XjyfBITZVmd44xhOYuC6I8YYF8AvJGTsYXoP9h3lA48r";
   const url = `https://plant.id/api/v3/identification/${accessToken}/conversation`;
 
