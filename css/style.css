@@ -526,7 +526,7 @@ body {
     }
     #plant-info {
         display: none;
-        grid-template-rows: min-content 1fr min-content;
+        grid-template-rows: min-content min-content min-content;
         height: 100%;
         margin: 45px 35px 35px 35px;
         opacity: 0;
