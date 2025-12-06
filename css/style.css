@@ -1311,7 +1311,7 @@ body {
         grid-template-columns: 1fr min-content;
         grid-template-rows: min-content 1fr;
         transition: all .15s ease;
-        margin-left: calc(50vw - 142px);
+        margin-left: calc(50vw - 160px);
         h1 {
             color: #FCF0D9;
             font-size: 24px;

@@ -640,14 +640,15 @@ function displaySavedPlants() {
 
       newYes.addEventListener("click", () => {
           plantDeleteCard.style.opacity = "0";
-          screenBlur.style.opacity = "0"
+          screenBlur.style.opacity = "0";
           setTimeout(() => {
             plantDeleteCard.style.display = "none";
-            screenBlur.style.display = "none"
+            screenBlur.style.display = "none";
           }, 200);
           switchScreens(plantInfoScreen, plantScreen);
           titleBar.style.display = "grid";
-          deletePlant(index);
+
+          deletePlant(plant.id);
       });
     };
 
@@ -944,15 +945,16 @@ function saveEvents() {
 
 renderCalendar();
 
-function deletePlant(index) {
-  if (index === -1 || !savedPlants[index]) {
-    console.error("deletePlant: invalid index", index);
+function deletePlant(plantId) {
+  const plantIndex = savedPlants.findIndex(p => p.id === plantId);
+  if (plantIndex === -1) {
+    console.error("deletePlant: invalid plantId", plantId);
     return;
   }
 
-  const deletedPlant = savedPlants[index].name;
+  const deletedPlant = savedPlants[plantIndex].name;
 
-  savedPlants.splice(index, 1);
+  savedPlants.splice(plantIndex, 1);
 
   for (const date in events) {
     events[date] = events[date].filter(evt => evt.plant !== deletedPlant);
