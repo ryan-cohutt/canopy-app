@@ -1,4 +1,10 @@
 /* ==================== iOS POLISH - GLOBAL STYLES ==================== */
+
+/* Global box-sizing reset - prevents width overflow */
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
 :root {
     --safe-area-top: env(safe-area-inset-top, 0px);
     --safe-area-bottom: env(safe-area-inset-bottom, 0px);
@@ -28,8 +34,11 @@ html {
     margin: 0;
     padding: 0;
     overflow: hidden;
+    overflow-x: hidden;
     height: 100vh;
     height: 100dvh;
+    width: 100%;
+    max-width: 100vw;
     -webkit-text-size-adjust: 100%;
 }
 
@@ -37,9 +46,13 @@ body {
     margin: 0;
     padding: 0;
     background-color: var(--color-bg);
-    overflow-y: hidden;
+    overflow: hidden;
+    overflow-x: hidden;
     height: 100vh;
     height: 100dvh;
+    width: 100%;
+    max-width: 100vw;
+    position: relative;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     -webkit-tap-highlight-color: transparent;
@@ -218,6 +231,8 @@ button, .plant-card, .reminder-card, .day-reminder-card {
         padding-bottom: var(--safe-area-bottom);
         opacity: 0;
         transition: opacity 0.3s var(--ios-ease);
+        overflow-x: hidden;
+        max-width: calc(100vw - 60px);
         #reminders-home {
             width: 100%;
             display: grid;
@@ -512,6 +527,8 @@ button, .plant-card, .reminder-card, .day-reminder-card {
         height: calc(100dvh - 97px - var(--safe-area-top));
         padding-bottom: var(--safe-area-bottom);
         overflow-y: scroll;
+        overflow-x: hidden;
+        max-width: calc(100vw - 60px);
         scrollbar-width: none;
         -webkit-overflow-scrolling: touch;
         #plants-list {
@@ -599,6 +616,7 @@ button, .plant-card, .reminder-card, .day-reminder-card {
         grid-template-rows: min-content min-content min-content;
         height: calc(100dvh - var(--safe-area-top));
         margin: 0px 35px 35px 35px;
+        max-width: calc(100vw - 70px);
         padding-top: var(--safe-area-top);
         padding-bottom: calc(35px + var(--safe-area-bottom));
         opacity: 0;
@@ -814,10 +832,13 @@ button, .plant-card, .reminder-card, .day-reminder-card {
         display: none;
         z-index: 4000;
         opacity: 0;
-        position: absolute;
+        position: fixed;
         top: 100dvh;
+        left: 0;
+        right: 0;
         bottom: auto;
         width: 100%;
+        max-width: 100vw;
         border-radius: var(--radius-lg) var(--radius-lg) 0 0;
         background-color: var(--color-card);
         height: auto;
@@ -826,6 +847,7 @@ button, .plant-card, .reminder-card, .day-reminder-card {
         -webkit-box-shadow: 0px -4px 30px 0px rgba(0,0,0,0.4);
         box-shadow: 0px -4px 30px 0px rgba(0,0,0,0.4);
         max-height: calc(65dvh + var(--safe-area-bottom));
+        overflow-x: hidden;
         #add-plant-close {
             margin-top: 10px;
             align-self: center;
@@ -1257,10 +1279,13 @@ button, .plant-card, .reminder-card, .day-reminder-card {
         display: none;
         z-index: 4000;
         opacity: 0;
-        position: absolute;
+        position: fixed;
         top: 100dvh;
+        left: 0;
+        right: 0;
         bottom: auto;
         width: 100%;
+        max-width: 100vw;
         border-radius: var(--radius-lg) var(--radius-lg) 0 0;
         background-color: var(--color-card);
         height: auto;
@@ -1269,6 +1294,7 @@ button, .plant-card, .reminder-card, .day-reminder-card {
         -webkit-box-shadow: 0px -4px 30px 0px rgba(0,0,0,0.4);
         box-shadow: 0px -4px 30px 0px rgba(0,0,0,0.4);
         max-height: calc(60dvh + var(--safe-area-bottom));
+        overflow-x: hidden;
         #add-reminder-close {
             margin-top: 10px;
             align-self: center;
@@ -1695,7 +1721,9 @@ input[type="time"] {
     position: fixed;
     top: 0;
     left: 0;
+    right: 0;
     width: 100%;
+    max-width: 100vw;
     height: 100dvh;
     background: var(--color-bg);
     z-index: 10000;
@@ -1704,6 +1732,7 @@ input[type="time"] {
     justify-content: center;
     gap: 30px;
     padding: var(--safe-area-top) var(--safe-area-right) var(--safe-area-bottom) var(--safe-area-left);
+    overflow: hidden;
 }
 
 #install-screen .logo-container {
@@ -1749,7 +1778,9 @@ input[type="time"] {
     position: fixed;
     top: 0;
     left: 0;
+    right: 0;
     width: 100%;
+    max-width: 100vw;
     height: 100dvh;
     background: var(--color-bg);
     z-index: 5000;
@@ -1757,6 +1788,7 @@ input[type="time"] {
     transition: opacity 0.3s var(--ios-ease);
     padding: var(--safe-area-top) 30px var(--safe-area-bottom);
     overflow-y: auto;
+    overflow-x: hidden;
     -webkit-overflow-scrolling: touch;
 }
 
@@ -1881,7 +1913,9 @@ input[type="time"] {
     position: fixed;
     top: 0;
     left: 0;
+    right: 0;
     width: 100%;
+    max-width: 100vw;
     height: 100dvh;
     background: var(--color-bg);
     z-index: 5000;
@@ -1889,6 +1923,7 @@ input[type="time"] {
     transition: opacity 0.3s var(--ios-ease);
     padding: var(--safe-area-top) 20px var(--safe-area-bottom);
     overflow-y: auto;
+    overflow-x: hidden;
     -webkit-overflow-scrolling: touch;
 }
 
@@ -1997,7 +2032,9 @@ input[type="time"] {
     position: fixed;
     bottom: 0;
     left: 0;
+    right: 0;
     width: 100%;
+    max-width: 100vw;
     border-radius: var(--radius-lg) var(--radius-lg) 0 0;
     background-color: var(--color-card);
     padding-bottom: calc(20px + var(--safe-area-bottom));
@@ -2006,6 +2043,7 @@ input[type="time"] {
     box-shadow: 0px -4px 30px 0px rgba(0,0,0,0.4);
     max-height: 85dvh;
     overflow-y: auto;
+    overflow-x: hidden;
 }
 
 .add-journal-header {
@@ -2110,7 +2148,9 @@ input[type="time"] {
     position: fixed;
     top: 0;
     left: 0;
+    right: 0;
     width: 100%;
+    max-width: 100vw;
     height: 100dvh;
     background: var(--color-bg);
     z-index: 5000;
@@ -2118,6 +2158,7 @@ input[type="time"] {
     transition: opacity 0.3s var(--ios-ease);
     padding: var(--safe-area-top) 20px var(--safe-area-bottom);
     overflow-y: auto;
+    overflow-x: hidden;
     -webkit-overflow-scrolling: touch;
 }
 
