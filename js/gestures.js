@@ -216,7 +216,8 @@ const TransitionManager = (function() {
     fromEl.style.width = '100%';
     fromEl.style.zIndex = direction === 'forward' ? '1' : '2';
 
-    toEl.style.display = 'grid';
+    // Use flex for home-screen, grid for others
+    toEl.style.display = toEl.id === 'home-screen' ? 'flex' : 'grid';
     toEl.style.position = 'absolute';
     toEl.style.top = '0';
     toEl.style.left = '0';
@@ -282,11 +283,12 @@ const TransitionManager = (function() {
     fromEl.style.opacity = '0';
 
     setTimeout(() => {
-      fromEl.style.display = 'none';
-      fromEl.style.transition = '';
-      
-      toEl.style.display = 'grid';
-      toEl.style.opacity = '0';
+    fromEl.style.display = 'none';
+    fromEl.style.transition = '';
+    
+    // Use flex for home-screen, grid for others
+    toEl.style.display = toEl.id === 'home-screen' ? 'flex' : 'grid';
+    toEl.style.opacity = '0';
       
       requestAnimationFrame(() => {
         toEl.style.transition = `opacity 200ms ease`;

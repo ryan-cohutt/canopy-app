@@ -377,7 +377,7 @@ window.addEventListener("load", () => {
     setTimeout(() => {
       loadScreen.style.display = "none";
       titleBar.style.display = "grid";
-      homeScreen.style.display = "grid";
+      homeScreen.style.display = "flex";
       setTimeout(() => {
         titleBar.style.opacity = "1";
         homeScreen.style.opacity = "1";
@@ -577,15 +577,16 @@ window.addEventListener("load", () => {
         addPlantInfo.style.display = "none";
         addPlantImage.style.display = "grid";
       });
-    } else {
-      // Fallback to simple fade
-      from.style.opacity = "0";
-      setTimeout(() => {
-        from.style.display = "none";
-        to.style.display = "grid";
-        setTimeout(() => (to.style.opacity = "1"), 15);
-      }, 300);
-    }
+  } else {
+  // Fallback to simple fade
+  from.style.opacity = "0";
+  setTimeout(() => {
+  from.style.display = "none";
+  // Use flex for home-screen, grid for others
+  to.style.display = to.id === 'home-screen' ? 'flex' : 'grid';
+  setTimeout(() => (to.style.opacity = "1"), 15);
+  }, 300);
+  }
   }
   
   function closeBottomSheets() {
