@@ -155,6 +155,10 @@ const addEventForm = document.getElementById('add-event-form');
 const eventTitleInput = document.getElementById('event-title');
 const eventTimeInput = document.getElementById('event-time');
 const saveEventBtn = document.getElementById('save-event-btn');
+const recurringCheckbox = document.getElementById('recurring-checkbox');
+const recurringOptions = document.getElementById('recurring-options');
+const recurringInterval = document.getElementById('recurring-interval');
+const recurringUnit = document.getElementById('recurring-unit');
 
 let TEST_MODE = false
 
@@ -172,6 +176,13 @@ buttons.forEach(btn => {
     eventTypeSelected = btn.textContent;
   });
 });
+
+// Toggle recurring options visibility
+if (recurringCheckbox && recurringOptions) {
+  recurringCheckbox.addEventListener('change', () => {
+    recurringOptions.style.display = recurringCheckbox.checked ? 'flex' : 'none';
+  });
+}
 
 let savedPlants = JSON.parse(localStorage.getItem('savedPlants')) || [];
 let events = JSON.parse(localStorage.getItem('events')) || {};
@@ -1214,19 +1225,26 @@ addReminderBtn.addEventListener('click', () => {
 });
 
 addReminderCloseBtn.addEventListener('click', () => {
-  if (window.TransitionManager) {
-    TransitionManager.bottomSheetClose(addReminderCard, () => {
-      eventTimeInput.value = '';
-      buttons.forEach(b => b.classList.remove("selected"));
-      plantSelect.value = "";
-      selectedName.textContent = "None";
-    });
-  } else {
-    addReminderCard.style.display = 'none';
+  const resetForm = () => {
     eventTimeInput.value = '';
     buttons.forEach(b => b.classList.remove("selected"));
     plantSelect.value = "";
     selectedName.textContent = "None";
+    eventTypeSelected = null;
+    // Reset recurring options
+    if (recurringCheckbox) {
+      recurringCheckbox.checked = false;
+      recurringOptions.style.display = 'none';
+      recurringInterval.value = '3';
+      recurringUnit.value = 'days';
+    }
+  };
+  
+  if (window.TransitionManager) {
+    TransitionManager.bottomSheetClose(addReminderCard, resetForm);
+  } else {
+    addReminderCard.style.display = 'none';
+    resetForm();
   }
 });
 
@@ -1280,7 +1298,16 @@ saveEventBtn.addEventListener('click', () => {
     return;
   }
 
-  events[correctedDate].push({ time, type, plant, completed: false });
+  // Build the event object with optional recurring info
+  const newEvent = { time, type, plant, completed: false };
+  
+  if (recurringCheckbox && recurringCheckbox.checked) {
+    const interval = parseInt(recurringInterval.value) || 1;
+    const unit = recurringUnit.value || 'days';
+    newEvent.recurring = { interval, unit };
+  }
+
+  events[correctedDate].push(newEvent);
 
   saveEvents();
 
@@ -1289,6 +1316,13 @@ saveEventBtn.addEventListener('click', () => {
     eventTimeInput.value = '';
     buttons.forEach(b => b.classList.remove("selected"));
     plantSelect.value = "";
+    // Reset recurring options
+    if (recurringCheckbox) {
+      recurringCheckbox.checked = false;
+      recurringOptions.style.display = 'none';
+      recurringInterval.value = '3';
+      recurringUnit.value = 'days';
+    }
     renderCalendar();
     renderEvents();
     displayHomeReminders();

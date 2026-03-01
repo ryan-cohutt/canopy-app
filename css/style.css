@@ -1384,6 +1384,63 @@ button, .plant-card, .reminder-card, .day-reminder-card {
                 color: #FCF0D9;
                 opacity: 1;
             }
+            #recurring-section {
+                display: flex;
+                flex-direction: column;
+                gap: 12px;
+            }
+            .recurring-toggle {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                cursor: pointer;
+            }
+            .recurring-toggle input[type="checkbox"] {
+                width: 20px;
+                height: 20px;
+                margin: 0;
+                margin-left: 0;
+                accent-color: #95DB59;
+                cursor: pointer;
+            }
+            .recurring-toggle span {
+                color: var(--color-cream);
+                font-size: 16px;
+            }
+            #recurring-options {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                padding: 12px;
+                background-color: var(--color-bg);
+                border-radius: 8px;
+            }
+            #recurring-options span {
+                color: var(--color-muted);
+                font-size: 14px;
+            }
+            #recurring-interval {
+                width: 50px;
+                height: 36px;
+                padding: 6px 8px;
+                margin-left: 0;
+                text-align: center;
+                font-size: 16px;
+                border-radius: 6px;
+                background-color: var(--color-card);
+                color: var(--color-cream);
+                border: 1px solid var(--color-muted);
+            }
+            #recurring-unit {
+                flex: 1;
+                height: 36px;
+                padding: 6px 10px;
+                font-size: 14px;
+                border-radius: 6px;
+                background-color: var(--color-card);
+                color: var(--color-cream);
+                border: 1px solid var(--color-muted);
+            }
             #save-event-btn {
                 width: 100%;
                 height: 42px;
