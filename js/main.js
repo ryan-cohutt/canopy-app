@@ -823,8 +823,14 @@ function displaySavedPlants() {
     const imgEl = document.createElement("img");
     imgEl.alt = plant.name;
 
-    const imgData = await getImageFromDB(plant.imageId + "_main");
-    imgEl.src = imgData;
+    // Use latest journal photo if available
+    const latestJournalPhoto = window.JournalManager?.getLatestPhoto(plant.id);
+    if (latestJournalPhoto) {
+      imgEl.src = latestJournalPhoto;
+    } else {
+      const imgData = await getImageFromDB(plant.imageId + "_main");
+      imgEl.src = imgData;
+    }
 
     card.appendChild(imgEl);
 
@@ -832,6 +838,12 @@ function displaySavedPlants() {
     plantCont.appendChild(card);
   });
 }
+
+// Listen for plant photo updates from journal
+window.addEventListener('plant-photo-updated', () => {
+  displaySavedPlants();
+  displayHomePlants();
+});
 
 
   function populatePlantSelect() {
@@ -864,14 +876,40 @@ function displaySavedPlants() {
     document.querySelector("#plant-screen-type").textContent = plant.species;
     document.querySelector("#plant-screen-care").textContent = plant.careSummary;
     document.querySelector("#full-instructions-content").textContent = plant.careFull;
-    getImageFromDB(plant.imageId + "_main").then(base64 => {
-      document.querySelector("#plant-img").style.backgroundImage = `url(${base64})`;
-    });
-
+    
+    // Use latest journal photo if available, otherwise use saved image
+    const latestJournalPhoto = window.JournalManager?.getLatestPhoto(plant.id);
+    if (latestJournalPhoto) {
+      document.querySelector("#plant-img").style.backgroundImage = `url(${latestJournalPhoto})`;
+    } else {
+      getImageFromDB(plant.imageId + "_main").then(base64 => {
+        document.querySelector("#plant-img").style.backgroundImage = `url(${base64})`;
+      });
+    }
 
     updatePlantReminders(plant.name);
 
     titleBar.style.display = "none";
+    
+    // Journal button handler
+    const journalBtn = document.querySelector("#plant-journal");
+    if (journalBtn) {
+      journalBtn.onclick = () => {
+        if (window.JournalManager) {
+          JournalManager.openJournal(plant.id, plant.name);
+        }
+      };
+    }
+    
+    // Health check button handler
+    const healthBtn = document.querySelector("#plant-health-check");
+    if (healthBtn) {
+      healthBtn.onclick = () => {
+        if (window.HealthCheckManager) {
+          HealthCheckManager.openHealthCheck(plant.id, plant.name);
+        }
+      };
+    }
 
     plantDeleteBtn.onclick = () => {
       plantDeleteCard.style.display = "grid";
@@ -1282,13 +1320,19 @@ async function displayHomePlants() {
       card.querySelector("h1.sherika").textContent = recentPlants[i].name;
       card.querySelector("p.dm-reg").textContent = recentPlants[i].species;
 
-      const imgData = await getImageFromDB(recentPlants[i].imageId + "_main");
-
+      // Use latest journal photo if available
+      const latestJournalPhoto = window.JournalManager?.getLatestPhoto(recentPlants[i].id);
       const imgEl = card.querySelector("img");
-      if (imgData) {
-        imgEl.src = imgData;
+      
+      if (latestJournalPhoto) {
+        imgEl.src = latestJournalPhoto;
       } else {
-        imgEl.src = "images/template-plant.webp";
+        const imgData = await getImageFromDB(recentPlants[i].imageId + "_main");
+        if (imgData) {
+          imgEl.src = imgData;
+        } else {
+          imgEl.src = "images/template-plant.webp";
+        }
       }
       imgEl.alt = recentPlants[i].name;
 
