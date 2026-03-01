@@ -226,14 +226,23 @@ button, .plant-card, .reminder-card, .day-reminder-card {
     }
     #home-screen {
         display: none;
-        height: calc(100dvh - 150px - var(--safe-area-top) - var(--safe-area-bottom));
+        height: calc(100dvh - 100px - var(--safe-area-top));
         margin: 0 30px;
         padding-bottom: var(--safe-area-bottom);
         opacity: 0;
         transition: opacity 0.3s var(--ios-ease);
-        overflow: hidden;
+        overflow-y: auto;
+        overflow-x: hidden;
         max-width: calc(100vw - 60px);
-        #reminders-home {
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+    }
+    
+    #home-screen::-webkit-scrollbar {
+        display: none;
+    }
+
+    #home-screen #reminders-home {
             width: 100%;
             display: grid;
             grid-template-columns: 1fr min-content;
@@ -2345,30 +2354,30 @@ input[type="time"] {
 #full-instructions {
     display: none;
     position: fixed;
-    top: 0;
+    bottom: 0;
     left: 0;
     right: 0;
     width: 100%;
     max-width: 100vw;
-    height: 100dvh;
-    background: var(--color-bg);
+    max-height: 80dvh;
+    background: var(--color-card);
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
     z-index: 6000;
     opacity: 0;
     transition: opacity 0.3s var(--ios-ease);
     overflow: hidden;
+    box-sizing: border-box;
 }
 
 #full-instructions > h1 {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    padding: calc(20px + var(--safe-area-top)) 25px 15px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px;
     margin: 0;
     color: var(--color-cream);
-    font-size: 28px;
-    background: linear-gradient(to bottom, var(--color-bg) 70%, transparent);
-    z-index: 2;
+    font-size: 22px;
+    border-bottom: 1px solid rgba(252, 240, 217, 0.1);
 }
 
 #full-overlay {
@@ -2376,16 +2385,14 @@ input[type="time"] {
 }
 
 #full-instructions-cont {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    padding: calc(80px + var(--safe-area-top)) 25px calc(80px + var(--safe-area-bottom));
+    padding: 20px;
+    padding-bottom: calc(20px + var(--safe-area-bottom));
     overflow-y: auto;
     overflow-x: hidden;
+    max-height: calc(80dvh - 70px);
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
+    box-sizing: border-box;
 }
 
 #full-instructions-cont::-webkit-scrollbar {
@@ -2485,22 +2492,20 @@ input[type="time"] {
 
 #full-close {
     position: absolute;
-    bottom: calc(30px + var(--safe-area-bottom));
-    left: 50%;
-    transform: translateX(-50%);
-    width: 50px;
-    height: 50px;
-    background: var(--color-card);
+    top: 15px;
+    right: 15px;
+    width: 36px;
+    height: 36px;
+    background: var(--color-bg);
     border: none;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     z-index: 3;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
 }
 
 #full-close svg {
-    width: 22px;
-    height: 22px;
+    width: 18px;
+    height: 18px;
 }

@@ -717,6 +717,7 @@ function handleImageSelection(file) {
       loader.style.display = "none";
       addPlantImage.style.display = "grid";
       console.error("Plant identification failed:", err);
+      alert("Failed to identify plant. Please check your internet connection and try again. Error: " + err.message);
     } finally {
       document.querySelector("#plant-name-input").value = "";
   
@@ -1089,11 +1090,20 @@ function formatCareInstructions(text) {
   return html;
 }
 
+// Store original care text element reference
+const fullInstructionsContent = document.querySelector("#full-instructions-content");
+const fullInstructionsCont = document.querySelector("#full-instructions-cont");
+let originalCareText = "";
+
 fullCareBtn.addEventListener('click', () => {
-  // Format the care instructions into sections
-  const careText = document.querySelector("#full-instructions-content").textContent;
-  const formattedContent = formatCareInstructions(careText);
-  document.querySelector("#full-instructions-cont").innerHTML = formattedContent;
+  // Get the care text from the stored element or the original
+  originalCareText = fullInstructionsContent ? fullInstructionsContent.textContent : "";
+  const formattedContent = formatCareInstructions(originalCareText);
+  
+  // Add formatted content after the original (hidden) content
+  if (fullInstructionsCont) {
+    fullInstructionsCont.innerHTML = `<p id="full-instructions-content" class="dm-light" style="display:none;">${originalCareText}</p>` + formattedContent;
+  }
   
   fullCare.style.display = "block";
   screenBlur.style.display = "grid";
