@@ -220,14 +220,8 @@ async function identifyPlant(base64Image) {
     };
   }
 
-  const response = await fetch("/api/identify", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ action: "identify", images: [base64Image] }),
-  });
-
-  const result = await response.json();
-  return result;
+  // Use PlantAPI for direct client-side API calls
+  return PlantAPI.identify(base64Image);
 }
 
 function resizeAndCompressImage(file, maxWidth = 800, maxHeight = 800, quality = 0.7) {
@@ -338,23 +332,12 @@ async function getCareInstructions(accessToken) {
     return "Water moderately and keep in indirect light.";
   }
 
-  const response = await fetch("/api/identify", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      action: "care",
-      accessToken,
-      question: "Provide a short 2-sentence care summary for this plant in language that a normal person could understand.",
-      prompt: "Give answer in 2 sentences.",
-    }),
-  });
-
-  if (!response.ok) {
-    const text = await response.text();
-    throw new Error(`API error ${response.status}: ${text}`);
-  }
-
-  const result = await response.json();
+  // Use PlantAPI for direct client-side API calls
+  const result = await PlantAPI.getConversation(
+    accessToken,
+    "Provide a short 2-sentence care summary for this plant in language that a normal person could understand.",
+    "Give answer in 2 sentences."
+  );
 
   if (result.messages && result.messages.length > 0) {
     return result.messages[result.messages.length - 1].content;
@@ -368,25 +351,13 @@ async function getCareParagraph(accessToken) {
     return "This is a longer care paragraph for testing purposes. It explains how to care for the plant, but without calling any real API.";
   }
   
-  // Use serverless proxy to keep API key secure
-  const response = await fetch("/api/identify", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      action: "careFull",
-      accessToken,
-      question: "Provide a full length, detailed care summary for this plant in language that a normal person could understand.",
-      prompt: "Give answer in one continuous paragraph.",
-      temperature: 0.5,
-    }),
-  });
-
-  if (!response.ok) {
-    const text = await response.text();
-    throw new Error(`API error ${response.status}: ${text}`);
-  }
-
-  const result = await response.json();
+  // Use PlantAPI for direct client-side API calls
+  const result = await PlantAPI.getConversation(
+    accessToken,
+    "Provide a full length, detailed care summary for this plant in language that a normal person could understand.",
+    "Give answer in one continuous paragraph.",
+    0.5
+  );
 
   if (result.messages && result.messages.length > 0) {
     return result.messages[result.messages.length - 1].content;
