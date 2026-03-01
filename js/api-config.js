@@ -1,22 +1,29 @@
 // ==================== PLANT.ID API CONFIGURATION ====================
 // This file handles API key management for client-side API calls
-// The key is lightly obfuscated to prevent casual scraping (not truly secure)
+// 
+// IMPORTANT: Replace 'YOUR_PLANT_ID_API_KEY_HERE' with your actual Plant.id API key
+// Get your key at: https://web.plant.id/
+//
+// The key is base64 encoded to avoid plain text in source (light obfuscation)
 
 const PlantAPI = (function() {
-  // Obfuscated API key - split and encoded to avoid plain text in source
-  // To update: encode your key with btoa() split into parts
-  const _p1 = 'Q3NQczNIOTZq';  // Part 1
-  const _p2 = 'M21NYUlZM0VF';  // Part 2
-  const _p3 = 'cFBLbHhlaGZz';  // Part 3
-  const _p4 = 'VnlvVHFmTE9E';  // Part 4
-  const _p5 = 'bXhkbWNKT0lo';  // Part 5
-  const _p6 = 'VDlRamw=';      // Part 6
+  // Base64 encoded API key - to update:
+  // 1. Get your API key from https://web.plant.id/
+  // 2. In browser console run: btoa('your-api-key-here')
+  // 3. Paste the result below
+  const _encodedKey = 'WU9VUl9QTEFOVF9JRF9BUElfS0VZX0hFUkU='; // <-- REPLACE THIS
   
   function _dk() {
     try {
-      return atob(_p1 + _p2 + _p3 + _p4 + _p5 + _p6);
+      const key = atob(_encodedKey);
+      // Check if key was replaced
+      if (key === 'YOUR_PLANT_ID_API_KEY_HERE') {
+        console.error('[Canopy] API key not configured! Edit js/api-config.js');
+        return null;
+      }
+      return key;
     } catch(e) {
-      console.error('API configuration error');
+      console.error('[Canopy] API configuration error:', e);
       return null;
     }
   }
