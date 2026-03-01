@@ -125,21 +125,10 @@ async function identifyPlant(base64Image) {
     };
   }
 
-  const apiKey = "Nq40v3XjyfBITZVmd44xhOYuC6I8YYF8AvJGTsYXoP9h3lA48r"; 
-  const apiUrl = "https://plant.id/api/v3/identification";
-
-  const data = {
-    images: [base64Image],
-    similar_images: true,
-  };
-
-  const response = await fetch(apiUrl, {
+  const response = await fetch("/api/identify", {
     method: "POST",
-    headers: {
-      "Api-Key": apiKey,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(data),
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ action: "identify", images: [base64Image] }),
   });
 
   const result = await response.json();
@@ -254,23 +243,15 @@ async function getCareInstructions(accessToken) {
     return "Water moderately and keep in indirect light.";
   }
 
-  const apiKey = "Nq40v3XjyfBITZVmd44xhOYuC6I8YYF8AvJGTsYXoP9h3lA48r";
-  const url = `https://plant.id/api/v3/identification/${accessToken}/conversation`;
-
-  const summaryCareData = {
-    question: "Provide a short 2-sentence care summary for this plant in language that a normal person could understand.",
-    prompt: "Give answer in 2 sentences.",
-    temperature: 0.5,
-    app_name: "MyAppBot",
-  };
-
-  const response = await fetch(url, {
+  const response = await fetch("/api/identify", {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "Api-Key": apiKey,
-    },
-    body: JSON.stringify(summaryCareData),
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      action: "care",
+      accessToken,
+      question: "Provide a short 2-sentence care summary for this plant in language that a normal person could understand.",
+      prompt: "Give answer in 2 sentences.",
+    }),
   });
 
   if (!response.ok) {
