@@ -15,6 +15,32 @@
     <link rel="manifest" href="./manifest.json" />
 </head>
 <body>
+    <!-- PWA Install Screen - Shows only in browser (not standalone) -->
+    <section id="install-screen">
+        <div class="logo-container">
+            <svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="60" cy="60" r="60" fill="#95DB59"/>
+                <path d="M60 25C60 25 40 35 40 55C40 75 60 95 60 95C60 95 80 75 80 55C80 35 60 25 60 25Z" fill="#302231"/>
+                <path d="M60 35C60 35 50 42 50 55C50 68 60 85 60 85C60 85 70 68 70 55C70 42 60 35 60 35Z" fill="#FCF0D9"/>
+            </svg>
+            <svg width="200" height="50" viewBox="0 0 368 86" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M40.0895 57.2308C28.2741 57.2308 19.0049 47.3031 19.0049 34.5808C19.0049 21.8585 28.2741 12 40.0895 12C47.8126 12 54.3895 15.8462 58.2818 22.1538L48.4664 28.6769C46.6741 25.4 43.6049 23.2923 40.0895 23.2923C34.6049 23.2923 30.4972 28.1846 30.4972 34.5808C30.4972 40.9769 34.6049 45.8692 40.0895 45.8692C43.6049 45.8692 46.751 43.7615 48.5433 40.4846L58.4049 46.7923C54.4664 53.3846 47.8895 57.2308 40.0895 57.2308Z" fill="#FCF0D9"/>
+                <path d="M78.7665 57.2308C67.2819 57.2308 59.2049 48.5385 59.2049 37.0538C59.2049 25.5692 67.2819 16.8769 78.7665 16.8769C90.251 16.8769 98.3281 25.5692 98.3281 37.0538C98.3281 48.5385 90.251 57.2308 78.7665 57.2308ZM78.7665 46.5C84.0357 46.5 87.4049 42.4385 87.4049 37.0538C87.4049 31.6692 84.0357 27.6077 78.7665 27.6077C73.4973 27.6077 70.1281 31.6692 70.1281 37.0538C70.1281 42.4385 73.4973 46.5 78.7665 46.5Z" fill="#FCF0D9"/>
+                <path d="M123.697 56.2H112.428L98.9512 17.9077H110.651L118.143 42.0077L125.697 17.9077H136.82L123.697 56.2Z" fill="#FCF0D9"/>
+            </svg>
+        </div>
+        <button id="install-btn" class="install-btn sherika">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 4V16M12 16L7 11M12 16L17 11" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M4 20H20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            Install App
+        </button>
+        <p id="install-instructions" class="install-instructions dm-light" style="display: none;">
+            Tap the <strong>Share</strong> button below, then select <strong>"Add to Home Screen"</strong> to install Canopy.
+        </p>
+    </section>
+    
     <section id="load-screen">
         <svg id="leaf-bg-svg" width="402" height="552" viewBox="0 0 402 552" fill="none" xmlns="http://www.w3.org/2000/svg">
             <mask id="mask0_236_934" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="402" height="552">
@@ -432,6 +458,119 @@
             </div>
         </div>
     </section>
+    
+    <!-- Plant Journal Screen -->
+    <section id="journal-screen">
+        <div class="journal-header">
+            <button id="journal-back-btn" class="journal-back-btn dm-reg">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                Back
+            </button>
+            <h1 id="journal-plant-name" class="sherika">Journal</h1>
+            <div style="width: 60px;"></div>
+        </div>
+        
+        <div class="journal-content">
+            <button id="add-journal-entry-btn" class="add-journal-btn">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 5V19M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                <span class="dm-reg">Add Entry</span>
+            </button>
+            
+            <div id="journal-entries" class="journal-entries">
+                <!-- Journal entries will be populated here -->
+            </div>
+        </div>
+    </section>
+    
+    <!-- Add Journal Entry Bottom Sheet -->
+    <section id="add-journal-card">
+        <div class="sheet-handle"></div>
+        <div class="add-journal-header">
+            <button id="journal-entry-close-btn" class="dm-reg" style="background: transparent; border: none; color: var(--color-green);">Cancel</button>
+            <h2 class="sherika" style="color: var(--color-cream); margin: 0;">New Entry</h2>
+            <button id="save-journal-entry-btn" class="dm-reg" style="background: transparent; border: none; color: var(--color-green);">Save</button>
+        </div>
+        
+        <div class="add-journal-content">
+            <div class="journal-photo-section">
+                <div id="journal-photo-preview" class="journal-photo-preview">
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 5V19M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                    <span class="dm-light">Add Photo</span>
+                </div>
+                <input type="file" id="journal-photo-input" accept="image/*" style="display: none;">
+            </div>
+            
+            <div class="journal-date-section">
+                <label class="dm-reg" style="color: var(--color-cream);">Date</label>
+                <input type="date" id="journal-entry-date" class="dm-reg">
+            </div>
+            
+            <div class="journal-tags-section">
+                <label class="dm-reg" style="color: var(--color-cream);">Tags (optional)</label>
+                <div class="journal-tags">
+                    <button class="journal-tag dm-reg" data-tag="new growth">New Growth</button>
+                    <button class="journal-tag dm-reg" data-tag="repotted">Repotted</button>
+                    <button class="journal-tag dm-reg" data-tag="pruned">Pruned</button>
+                    <button class="journal-tag dm-reg" data-tag="flowering">Flowering</button>
+                    <button class="journal-tag dm-reg" data-tag="issue">Issue</button>
+                </div>
+            </div>
+            
+            <div class="journal-note-section">
+                <label class="dm-reg" style="color: var(--color-cream);">Notes</label>
+                <textarea id="journal-entry-note" class="dm-reg" placeholder="How is your plant doing?" rows="4"></textarea>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Health Check Screen -->
+    <section id="health-screen">
+        <div class="health-header">
+            <button id="health-back-btn" class="health-back-btn dm-reg">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                Back
+            </button>
+            <h1 id="health-plant-name" class="sherika">Health Check</h1>
+            <div style="width: 60px;"></div>
+        </div>
+        
+        <div class="health-content">
+            <div id="health-capture-section" class="health-capture">
+                <div class="health-icon">
+                    <svg width="80" height="80" viewBox="0 0 640 640" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M320 171.9L305 151.1C280 116.5 239.9 96 197.1 96C123.6 96 64 155.6 64 229.1L64 231.7C64 255.3 70.2 279.7 80.6 304L186.6 304C189.8 304 192.7 302.1 194 299.1L225.8 222.8C229.5 214 238.1 208.2 247.6 208C257.1 207.8 265.9 213.4 269.8 222.1L321.1 336L362.5 253.2C366.6 245.1 374.9 239.9 384 239.9C393.1 239.9 401.4 245 405.5 253.2L428.7 299.5C430.1 302.2 432.8 303.9 435.9 303.9L559.5 303.9C570 279.6 576.1 255.2 576.1 231.6L576.1 229C576 155.6 516.4 96 442.9 96C400.2 96 360 116.5 335 151.1L320 171.8zM533.6 352L435.8 352C414.6 352 395.2 340 385.7 321L384 317.6L341.5 402.7C337.4 411 328.8 416.2 319.5 416C310.2 415.8 301.9 410.3 298.1 401.9L248.8 292.4L238.3 317.6C229.6 338.5 209.2 352.1 186.6 352.1L106.4 352.1C153.6 425.9 229.4 493.8 276.8 530C289.2 539.4 304.4 544.1 319.9 544.1C335.4 544.1 350.7 539.5 363 530C410.6 493.7 486.4 425.8 533.6 352z"/>
+                    </svg>
+                </div>
+                <h2 class="dm-xtra" style="color: var(--color-cream); margin-bottom: 10px;">Check Plant Health</h2>
+                <p class="dm-light" style="color: var(--color-muted); text-align: center; margin-bottom: 20px;">Take a photo of your plant to check for diseases, pests, or other health issues.</p>
+                <button id="health-camera-btn" class="health-action-btn sherika">
+                    <svg width="21" height="18" viewBox="0 0 21 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M6.11543 1.31786L5.68887 2.57143H2.625C1.17715 2.57143 0 3.72455 0 5.14286V15.4286C0 16.8469 1.17715 18 2.625 18H18.375C19.8229 18 21 16.8469 21 15.4286V5.14286C21 3.72455 19.8229 2.57143 18.375 2.57143H15.3111L14.8846 1.31786C14.618 0.530357 13.8674 0 13.0184 0H7.98164C7.13262 0 6.38203 0.530357 6.11543 1.31786ZM10.5 6.42857C12.6738 6.42857 14.4375 8.15625 14.4375 10.2857C14.4375 12.4152 12.6738 14.1429 10.5 14.1429C8.32617 14.1429 6.5625 12.4152 6.5625 10.2857C6.5625 8.15625 8.32617 6.42857 10.5 6.42857Z" fill="currentColor"/>
+                    </svg>
+                    Take Photo
+                </button>
+                <input type="file" id="health-camera-input" accept="image/*" capture="environment" style="display: none;">
+            </div>
+            
+            <div id="health-loading" class="health-loading" style="display: none;">
+                <div class="loader"></div>
+                <p class="dm-reg" style="color: var(--color-cream); margin-top: 20px;">Analyzing plant health...</p>
+            </div>
+            
+            <div id="health-results" class="health-results" style="display: none;">
+                <!-- Results will be populated here -->
+            </div>
+        </div>
+    </section>
+    
     <section id="add-reminder-card">
         <div id="add-reminder-close">
             <button id="add-reminder-close-btn">
@@ -617,6 +756,61 @@
         <button id="reminder-card-close" class="dm-xtra">Close</button>
         <button id="reminder-delete-btn" class="dm-xtra">Delete</button>
     </section>
+    
+    <!-- Settings Screen -->
+    <section id="settings-screen">
+        <div class="settings-header">
+            <button id="settings-back-btn" class="settings-back-btn dm-reg">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                Back
+            </button>
+            <h1 class="sherika">Settings</h1>
+            <div style="width: 60px;"></div>
+        </div>
+        
+        <div class="settings-section">
+            <h2 class="dm-black">Notifications</h2>
+            <div class="settings-item">
+                <span class="dm-reg">Enable Notifications</span>
+                <div id="notifications-toggle" class="toggle"></div>
+            </div>
+            <div class="settings-item">
+                <span class="dm-reg">Notification Mode</span>
+                <select id="notification-mode" class="dm-reg">
+                    <option value="exact">Exact Time</option>
+                    <option value="digest">Morning Digest</option>
+                </select>
+            </div>
+            <div class="settings-item" id="digest-time-item" style="display: none;">
+                <span class="dm-reg">Digest Time</span>
+                <input type="time" id="digest-time" value="08:00" class="dm-reg" style="background: var(--color-bg); color: var(--color-cream); border: none; padding: 8px; border-radius: 6px;">
+            </div>
+        </div>
+        
+        <div class="settings-section">
+            <h2 class="dm-black">Data</h2>
+            <div class="settings-item">
+                <span class="dm-reg">Export Plant Data</span>
+                <button id="export-data-btn" class="dm-reg" style="background: var(--color-green); color: var(--color-card); border: none; padding: 8px 16px; border-radius: 6px;">Export</button>
+            </div>
+            <button id="clear-data-btn" class="settings-danger-btn dm-reg">Clear All Data</button>
+        </div>
+        
+        <div class="settings-section">
+            <h2 class="dm-black">About</h2>
+            <div class="settings-item">
+                <span class="dm-reg">App Version</span>
+                <span class="dm-light" style="color: var(--color-muted);">1.0.0</span>
+            </div>
+        </div>
+        
+        <p class="settings-version dm-light">Canopy Plant Care App</p>
+    </section>
+    
+    <script src="js/gestures.js"></script>
+    <script src="js/notifications.js"></script>
     <script src="js/main.js"></script>
 </body>
 </html>

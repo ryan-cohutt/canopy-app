@@ -1,3 +1,86 @@
+// ==================== PWA INSTALL DETECTION ====================
+const installScreen = document.querySelector("#install-screen");
+const installBtn = document.querySelector("#install-btn");
+const installInstructions = document.querySelector("#install-instructions");
+let deferredPrompt = null;
+
+// Check if running as installed PWA (standalone mode)
+function isStandalone() {
+  return window.matchMedia('(display-mode: standalone)').matches ||
+         window.navigator.standalone === true ||
+         document.referrer.includes('android-app://');
+}
+
+// Show install screen for browser visitors, hide for installed app
+function handleInstallScreen() {
+  if (isStandalone()) {
+    // Running as installed PWA - hide install screen, show app
+    if (installScreen) installScreen.style.display = 'none';
+    return true;
+  } else {
+    // Running in browser - show install screen
+    if (installScreen) {
+      installScreen.style.display = 'flex';
+      
+      // Check if iOS (no beforeinstallprompt support)
+      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+      if (isIOS) {
+        if (installBtn) installBtn.style.display = 'none';
+        if (installInstructions) installInstructions.style.display = 'block';
+      }
+    }
+    return false;
+  }
+}
+
+// Capture the install prompt for later use
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  
+  // Show install button since we can trigger the prompt
+  if (installBtn) {
+    installBtn.style.display = 'flex';
+    if (installInstructions) installInstructions.style.display = 'none';
+  }
+});
+
+// Handle install button click
+if (installBtn) {
+  installBtn.addEventListener('click', async () => {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      
+      if (outcome === 'accepted') {
+        // User installed - hide install screen
+        if (installScreen) {
+          installScreen.style.opacity = '0';
+          setTimeout(() => {
+            installScreen.style.display = 'none';
+          }, 300);
+        }
+      }
+      deferredPrompt = null;
+    }
+  });
+}
+
+// Listen for successful install
+window.addEventListener('appinstalled', () => {
+  if (installScreen) {
+    installScreen.style.opacity = '0';
+    setTimeout(() => {
+      installScreen.style.display = 'none';
+    }, 300);
+  }
+  deferredPrompt = null;
+});
+
+// Initialize install screen check
+const isInstalledApp = handleInstallScreen();
+
+// ==================== DOM ELEMENTS ====================
 let loadScreen = document.querySelector("#load-screen");
 let startBtn = document.querySelector("#start-btn");
 let titleBar = document.querySelector("#title-bar");
@@ -273,23 +356,17 @@ async function getCareParagraph(accessToken) {
     return "This is a longer care paragraph for testing purposes. It explains how to care for the plant, but without calling any real API.";
   }
   
-  const apiKey = "Nq40v3XjyfBITZVmd44xhOYuC6I8YYF8AvJGTsYXoP9h3lA48r";
-  const url = `https://plant.id/api/v3/identification/${accessToken}/conversation`;
-
-  const paragraphCareData = {
-    question: "Provide a full length, detailed care summary for this plant in language that a normal person could understand.",
-    prompt: "Give answer in one continuous paragraph.",
-    temperature: 0.5,
-    app_name: "MyAppBot",
-  };
-
-  const response = await fetch(url, {
+  // Use serverless proxy to keep API key secure
+  const response = await fetch("/api/identify", {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "Api-Key": apiKey,
-    },
-    body: JSON.stringify(paragraphCareData),
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      action: "careFull",
+      accessToken,
+      question: "Provide a full length, detailed care summary for this plant in language that a normal person could understand.",
+      prompt: "Give answer in one continuous paragraph.",
+      temperature: 0.5,
+    }),
   });
 
   if (!response.ok) {
@@ -325,36 +402,223 @@ window.addEventListener("load", () => {
     }, 800);
   });
 
-  settingsBtn.addEventListener("click", () => {
-    if (TEST_MODE == false) {
-      settingsIcon.style.fill = '#95DB59'
-      TEST_MODE = true
-    } else if (TEST_MODE == true) {
-      settingsIcon.style.fill = '#FCF0D9'
-      TEST_MODE = false
+  // Settings screen management
+  const settingsScreen = document.getElementById('settings-screen');
+  const settingsBackBtn = document.getElementById('settings-back-btn');
+  const notificationsToggle = document.getElementById('notifications-toggle');
+  const notificationModeSelect = document.getElementById('notification-mode');
+  const digestTimeItem = document.getElementById('digest-time-item');
+  const digestTimeInput = document.getElementById('digest-time');
+  const exportDataBtn = document.getElementById('export-data-btn');
+  const clearDataBtn = document.getElementById('clear-data-btn');
+  
+  // Initialize settings UI
+  function initSettingsUI() {
+    if (window.NotificationManager) {
+      const settings = NotificationManager.getSettings();
+      if (notificationsToggle) {
+        notificationsToggle.classList.toggle('active', settings.enabled);
+      }
+      if (notificationModeSelect) {
+        notificationModeSelect.value = settings.mode;
+      }
+      if (digestTimeInput) {
+        digestTimeInput.value = settings.digestTime;
+      }
+      updateDigestTimeVisibility(settings.mode);
     }
-    currentPlant = {};
-    console.log(TEST_MODE)
-  })
+  }
+  
+  function updateDigestTimeVisibility(mode) {
+    if (digestTimeItem) {
+      digestTimeItem.style.display = mode === 'digest' ? 'flex' : 'none';
+    }
+  }
+  
+  settingsBtn.addEventListener("click", () => {
+    initSettingsUI();
+    if (settingsScreen) {
+      settingsScreen.style.display = 'block';
+      settingsScreen.style.opacity = '0';
+      requestAnimationFrame(() => {
+        settingsScreen.style.transition = 'opacity 0.3s ease';
+        settingsScreen.style.opacity = '1';
+      });
+      
+      // Update navigation state
+      if (window.NavigationManager) {
+        NavigationManager.pushScreen('settings-screen');
+      }
+    }
+  });
+  
+  if (settingsBackBtn) {
+    settingsBackBtn.addEventListener('click', () => {
+      if (settingsScreen) {
+        settingsScreen.style.transition = 'opacity 0.3s ease';
+        settingsScreen.style.opacity = '0';
+        setTimeout(() => {
+          settingsScreen.style.display = 'none';
+        }, 300);
+      }
+    });
+  }
+  
+  // Notification toggle
+  if (notificationsToggle) {
+    notificationsToggle.addEventListener('click', async () => {
+      if (window.NotificationManager) {
+        const currentState = notificationsToggle.classList.contains('active');
+        const newState = await NotificationManager.setEnabled(!currentState);
+        notificationsToggle.classList.toggle('active', newState);
+        
+        if (!newState && !currentState) {
+          alert('Please enable notifications in your browser settings to use this feature.');
+        }
+      }
+    });
+  }
+  
+  // Notification mode select
+  if (notificationModeSelect) {
+    notificationModeSelect.addEventListener('change', () => {
+      const mode = notificationModeSelect.value;
+      if (window.NotificationManager) {
+        NotificationManager.setMode(mode);
+      }
+      updateDigestTimeVisibility(mode);
+    });
+  }
+  
+  // Digest time input
+  if (digestTimeInput) {
+    digestTimeInput.addEventListener('change', () => {
+      if (window.NotificationManager) {
+        NotificationManager.setDigestTime(digestTimeInput.value);
+      }
+    });
+  }
+  
+  // Export data button
+  if (exportDataBtn) {
+    exportDataBtn.addEventListener('click', () => {
+      const data = {
+        plants: savedPlants,
+        events: events,
+        exportDate: new Date().toISOString()
+      };
+      
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `canopy-backup-${new Date().toISOString().split('T')[0]}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+    });
+  }
+  
+  // Clear data button
+  if (clearDataBtn) {
+    clearDataBtn.addEventListener('click', () => {
+      if (confirm('Are you sure you want to clear all data? This cannot be undone.')) {
+        if (confirm('This will delete all your plants and reminders. Continue?')) {
+          localStorage.removeItem('savedPlants');
+          localStorage.removeItem('events');
+          savedPlants = [];
+          events = {};
+          
+          displaySavedPlants();
+          displayHomePlants();
+          displayHomeReminders();
+          displayHomeReminders(remindersPageContainer);
+          populatePlantSelect();
+          renderCalendar();
+          renderEvents();
+          
+          alert('All data has been cleared.');
+        }
+      }
+    });
+  }
 
-  allPlantBtn.addEventListener("click", () => switchScreens(homeScreen, plantScreen));
-  plantAmountOverlay.addEventListener("click", () => switchScreens(homeScreen, plantScreen));
-  gridBtn.addEventListener("click", () => switchScreens(plantScreen, homeScreen));
-  gridBtn.addEventListener("click", () => switchScreens(remindersScreen, homeScreen));
-  plantGridBtn.addEventListener("click", () => {titleBar.style.display = "grid"; switchScreens(plantInfoScreen, plantScreen)});
-  allRemindersBtn.addEventListener("click", () => switchScreens(homeScreen, remindersScreen));
+  // Navigation with iOS-style transitions
+  allPlantBtn.addEventListener("click", () => switchScreens(homeScreen, plantScreen, 'forward'));
+  plantAmountOverlay.addEventListener("click", () => switchScreens(homeScreen, plantScreen, 'forward'));
+  gridBtn.addEventListener("click", () => {
+    // Determine which screen to go back from
+    if (plantScreen.style.display === 'grid') {
+      switchScreens(plantScreen, homeScreen, 'back');
+    } else if (remindersScreen.style.display === 'grid') {
+      switchScreens(remindersScreen, homeScreen, 'back');
+    }
+  });
+  plantGridBtn.addEventListener("click", () => {
+    titleBar.style.display = "grid"; 
+    switchScreens(plantInfoScreen, plantScreen, 'back');
+  });
+  allRemindersBtn.addEventListener("click", () => switchScreens(homeScreen, remindersScreen, 'forward'));
 
-  function switchScreens(from, to) {
-    from.style.opacity = "0";
-    setTimeout(() => {
-      from.style.display = "none";
-      to.style.display = "grid";
-      setTimeout(() => (to.style.opacity = "1"), 15);
-    }, 300);
-    addPlantCard.style.opacity = "0";
-    setTimeout(() => (addPlantCard.style.display = "none"), 300);
-    addReminderCard.style.opacity = "0";
-    setTimeout(() => (addReminderCard.style.display = "none"), 300);
+  // Handle swipe-back navigation
+  document.addEventListener('navigate-back', (e) => {
+    const { from, to } = e.detail;
+    const fromEl = document.getElementById(from);
+    const toEl = document.getElementById(to);
+    
+    if (from === 'plant-info') {
+      titleBar.style.display = "grid";
+    }
+    
+    if (fromEl && toEl) {
+      switchScreens(fromEl, toEl, 'back');
+    }
+  });
+
+  function switchScreens(from, to, direction = 'forward') {
+    // Close any open bottom sheets
+    closeBottomSheets();
+    
+    // Update navigation stack
+    if (window.NavigationManager) {
+      if (direction === 'forward') {
+        NavigationManager.pushScreen(to.id);
+      } else {
+        NavigationManager.setCurrentScreen(to.id);
+      }
+    }
+    
+    // Use TransitionManager for smooth iOS-style transitions
+    if (window.TransitionManager) {
+      TransitionManager.slideTransition(from, to, direction, () => {
+        // Reset form states
+        addPlantInfo.style.display = "none";
+        addPlantImage.style.display = "grid";
+      });
+    } else {
+      // Fallback to simple fade
+      from.style.opacity = "0";
+      setTimeout(() => {
+        from.style.display = "none";
+        to.style.display = "grid";
+        setTimeout(() => (to.style.opacity = "1"), 15);
+      }, 300);
+    }
+  }
+  
+  function closeBottomSheets() {
+    if (window.TransitionManager) {
+      if (addPlantCard.style.display === 'grid') {
+        TransitionManager.bottomSheetClose(addPlantCard);
+      }
+      if (addReminderCard.style.display === 'grid') {
+        TransitionManager.bottomSheetClose(addReminderCard);
+      }
+    } else {
+      addPlantCard.style.opacity = "0";
+      setTimeout(() => (addPlantCard.style.display = "none"), 300);
+      addReminderCard.style.opacity = "0";
+      setTimeout(() => (addReminderCard.style.display = "none"), 300);
+    }
     addPlantInfo.style.display = "none";
     addPlantImage.style.display = "grid";
   }
@@ -370,23 +634,36 @@ window.addEventListener("load", () => {
     document.querySelector("#plant-care-output").textContent = "";
     document.querySelector("#full-instructions-content").textContent = "";
 
-    addPlantCard.style.display = "grid";
     addPlantInfo.style.display = "none";
     addPlantImage.style.display = "grid";
     plantLoading.style.display = "none";
     plantLoading.style.opacity = "0";
-    setTimeout(() => {
+    
+    // Use TransitionManager for iOS-style bottom sheet
+    if (window.TransitionManager) {
+      TransitionManager.bottomSheetOpen(addPlantCard);
+    } else {
+      addPlantCard.style.display = "grid";
+      setTimeout(() => {
         addPlantCard.style.opacity = "1";
         addPlantCard.style.bottom = "0";
         addPlantCard.style.top = 'auto';
-    }, 300);
+      }, 50);
+    }
   }
 
   addPlantCloseBtn.addEventListener("click", () => {
-    addPlantCard.style.opacity = "0";
-    setTimeout(() => (addPlantCard.style.display = "none"), 300);
-    addPlantInfo.style.display = "none";
-    addPlantImage.style.display = "grid";
+    if (window.TransitionManager) {
+      TransitionManager.bottomSheetClose(addPlantCard, () => {
+        addPlantInfo.style.display = "none";
+        addPlantImage.style.display = "grid";
+      });
+    } else {
+      addPlantCard.style.opacity = "0";
+      setTimeout(() => (addPlantCard.style.display = "none"), 300);
+      addPlantInfo.style.display = "none";
+      addPlantImage.style.display = "grid";
+    }
   });
 
 plantCameraBtn.addEventListener("click", () => cameraInput.click());
@@ -810,48 +1087,34 @@ addReminderBtn.addEventListener('click', () => {
     return;
   }
 
-
-
-  addReminderCard.style.display = "grid";
-  setTimeout(() => {
+  // Use TransitionManager for iOS-style bottom sheet
+  if (window.TransitionManager) {
+    TransitionManager.bottomSheetOpen(addReminderCard);
+  } else {
+    addReminderCard.style.display = "grid";
+    setTimeout(() => {
       addReminderCard.style.opacity = "1";
       addReminderCard.style.bottom = "0";
       addReminderCard.style.top = 'auto';
-  }, 300);
-  
-  addReminderCloseBtn.addEventListener("click", () => {
-    addReminderCard.style.opacity = "0";
-    setTimeout(() => (addReminderCard.style.display = "none"), 300);
-  });
+    }, 50);
+  }
 });
 
-
-// addReminderHome.addEventListener('click', () => {
-//   // if (!selectedDate) {
-//   //   alert('Please select a day first');
-//   //   return;
-//   // }
-
-//   addReminderCard.style.display = "grid";
-//   setTimeout(() => {
-//       addReminderCard.style.opacity = "1";
-//       addReminderCard.style.bottom = "0";
-//       addReminderCard.style.top = 'auto';
-//   }, 300);
-  
-//   addReminderCloseBtn.addEventListener("click", () => {
-//     addReminderCard.style.opacity = "0";
-//     setTimeout(() => (addReminderCard.style.display = "none"), 300);
-//   });
-// });
-
 addReminderCloseBtn.addEventListener('click', () => {
-  addReminderCard.style.display = 'none';
-  // eventTitleInput.value = '';
-  eventTimeInput.value = '';
-  buttons.forEach(b => b.classList.remove("selected"));
-  plantSelect.value = "";
-  selectedName.textContent = "None"
+  if (window.TransitionManager) {
+    TransitionManager.bottomSheetClose(addReminderCard, () => {
+      eventTimeInput.value = '';
+      buttons.forEach(b => b.classList.remove("selected"));
+      plantSelect.value = "";
+      selectedName.textContent = "None";
+    });
+  } else {
+    addReminderCard.style.display = 'none';
+    eventTimeInput.value = '';
+    buttons.forEach(b => b.classList.remove("selected"));
+    plantSelect.value = "";
+    selectedName.textContent = "None";
+  }
 });
 
 saveEventBtn.addEventListener('click', () => {
@@ -908,15 +1171,23 @@ saveEventBtn.addEventListener('click', () => {
 
   saveEvents();
 
-  addReminderCard.style.display = 'none';
-  // eventTitleInput.value = '';
-  eventTimeInput.value = '';
-  buttons.forEach(b => b.classList.remove("selected"));
-  plantSelect.value = "";
-  renderCalendar();
-  renderEvents();
-  displayHomeReminders();
-  displayHomeReminders(remindersPageContainer);
+  // Close bottom sheet with transition
+  const afterClose = () => {
+    eventTimeInput.value = '';
+    buttons.forEach(b => b.classList.remove("selected"));
+    plantSelect.value = "";
+    renderCalendar();
+    renderEvents();
+    displayHomeReminders();
+    displayHomeReminders(remindersPageContainer);
+  };
+  
+  if (window.TransitionManager) {
+    TransitionManager.bottomSheetClose(addReminderCard, afterClose);
+  } else {
+    addReminderCard.style.display = 'none';
+    afterClose();
+  }
 });
 
 
