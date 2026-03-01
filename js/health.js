@@ -16,6 +16,7 @@ const HealthCheckManager = (function() {
   const healthCameraInput = document.getElementById('health-camera-input');
   const healthLoading = document.getElementById('health-loading');
   const healthResults = document.getElementById('health-results');
+  const healthOpenBtn = document.getElementById('health-check')
   
   // Initialize
   function init() {
@@ -24,6 +25,11 @@ const HealthCheckManager = (function() {
   
   // Setup event listeners
   function setupEventListeners() {
+    // Open button
+    if (healthOpenBtn) {
+      healthOpenBtn.addEventListener('click', openHealthCheck)
+    }
+
     // Back button
     if (healthBackBtn) {
       healthBackBtn.addEventListener('click', closeHealthScreen);

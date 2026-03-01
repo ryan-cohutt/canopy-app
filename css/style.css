@@ -1470,19 +1470,19 @@ button, .plant-card, .reminder-card, .day-reminder-card {
         display: none;
         opacity: 0;
         width: 100%;
-        max-width: 220px;
+        max-width: 280px;
         position: absolute;
         align-self: center;
         justify-self: center;
         top: 50%;
-        margin-left: calc(50vw - 142px);
+        /* margin-left: calc(50vw - 142px); */
         background-color: #19101A;
         color: #FCF0D9;
         justify-items: center;
         row-gap: 15px;
         column-gap: 15px;
         border-radius: 16px;
-        padding: 27px 32px;
+        padding: 27px 30px;
         grid-template-columns: 1fr 1fr;
         grid-template-rows: 1fr min-content;
         z-index: 4500;
@@ -1516,19 +1516,19 @@ button, .plant-card, .reminder-card, .day-reminder-card {
         display: none;
         opacity: 0;
         width: 100%;
-        max-width: 220px;
+        max-width: 280px;
         position: absolute;
         align-self: center;
         justify-self: center;
         top: 50%;
-        margin-left: calc(50vw - 142px);
+        /* margin-left: calc(50vw - 142px); */
         background-color: #19101A;
         color: #FCF0D9;
         justify-items: center;
         row-gap: 15px;
         column-gap: 15px;
         border-radius: 16px;
-        padding: 27px 32px;
+        padding: 27px 30px;
         grid-template-columns: 1fr 1fr;
         z-index: 4500;
         transition: all .2s ease;
