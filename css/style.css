@@ -1741,6 +1741,15 @@ input[type="time"] {
     gap: 30px;
     padding: var(--safe-area-top) var(--safe-area-right) var(--safe-area-bottom) var(--safe-area-left);
     overflow: hidden;
+    img {
+        max-width: 200px;
+        -webkit-box-shadow: 0px 0px 39px 6px #19101A; 
+        box-shadow: 0px 0px 39px 6px #19101A;
+        border-radius: 35px;
+    }
+    svg {
+        width: 200px !important;
+    }
 }
 
 #install-screen .logo-container {
@@ -1766,6 +1775,8 @@ input[type="time"] {
     display: flex;
     align-items: center;
     gap: 10px;
+    text-wrap: nowrap;
+    width: 200px;
 }
 
 #install-screen .install-instructions {
