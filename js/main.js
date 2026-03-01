@@ -1013,22 +1013,103 @@ function renderCalendar() {
 }
 
 
+// Format care instructions into digestible sections
+function formatCareInstructions(text) {
+  if (!text || text === "Full care info unavailable.") {
+    return `<p class="care-section-content">${text || "No care instructions available."}</p>`;
+  }
+  
+  // Try to break up the paragraph into logical sections
+  const sections = [
+    { icon: '💧', title: 'Watering', keywords: ['water', 'moist', 'dry', 'humid', 'drainage'] },
+    { icon: '☀️', title: 'Light', keywords: ['light', 'sun', 'bright', 'shade', 'indirect'] },
+    { icon: '🌡️', title: 'Temperature', keywords: ['temperature', 'warm', 'cold', 'heat', 'cool'] },
+    { icon: '🌱', title: 'Soil & Feeding', keywords: ['soil', 'fertiliz', 'feed', 'nutrient', 'potting'] },
+    { icon: '✂️', title: 'Maintenance', keywords: ['prune', 'trim', 'clean', 'dust', 'repot', 'propagat'] }
+  ];
+  
+  // Split text into sentences
+  const sentences = text.split(/(?<=[.!?])\s+/);
+  const usedSentences = new Set();
+  let html = '';
+  
+  // Try to categorize sentences into sections
+  sections.forEach(section => {
+    const matchingSentences = sentences.filter((s, idx) => {
+      if (usedSentences.has(idx)) return false;
+      const lower = s.toLowerCase();
+      return section.keywords.some(kw => lower.includes(kw));
+    });
+    
+    if (matchingSentences.length > 0) {
+      matchingSentences.forEach((s, i) => {
+        const idx = sentences.indexOf(s);
+        usedSentences.add(idx);
+      });
+      
+      html += `
+        <div class="care-section">
+          <div class="care-section-header">
+            <div class="care-section-icon">${section.icon}</div>
+            <h3 class="care-section-title dm-xtra">${section.title}</h3>
+          </div>
+          <p class="care-section-content dm-reg">${matchingSentences.join(' ')}</p>
+        </div>
+      `;
+    }
+  });
+  
+  // Add remaining sentences as general care
+  const remaining = sentences.filter((s, idx) => !usedSentences.has(idx));
+  if (remaining.length > 0) {
+    html += `
+      <div class="care-section">
+        <div class="care-section-header">
+          <div class="care-section-icon">📋</div>
+          <h3 class="care-section-title dm-xtra">General Care</h3>
+        </div>
+        <p class="care-section-content dm-reg">${remaining.join(' ')}</p>
+      </div>
+    `;
+  }
+  
+  // If no sections were created, show the original text
+  if (html === '') {
+    html = `
+      <div class="care-section">
+        <div class="care-section-header">
+          <div class="care-section-icon">🌿</div>
+          <h3 class="care-section-title dm-xtra">Care Guide</h3>
+        </div>
+        <p class="care-section-content dm-reg">${text}</p>
+      </div>
+    `;
+  }
+  
+  return html;
+}
+
 fullCareBtn.addEventListener('click', () => {
-  fullCare.style.display = "grid"
-  screenBlur.style.display = "grid"
+  // Format the care instructions into sections
+  const careText = document.querySelector("#full-instructions-content").textContent;
+  const formattedContent = formatCareInstructions(careText);
+  document.querySelector("#full-instructions-cont").innerHTML = formattedContent;
+  
+  fullCare.style.display = "block";
+  screenBlur.style.display = "grid";
   setTimeout(() => {
-    fullCare.style.opacity = "1"
-    screenBlur.style.opacity = "1"
-  }, 150);
+    fullCare.style.opacity = "1";
+    screenBlur.style.opacity = "1";
+  }, 50);
 })
 
 fullCareClose.addEventListener('click', () => {
-  fullCare.style.opacity = "0"
-    screenBlur.style.opacity = "0"
+  fullCare.style.opacity = "0";
+  screenBlur.style.opacity = "0";
   setTimeout(() => {
-    fullCare.style.display = "none"
-    screenBlur.style.display = "none"
-  }, 150);
+    fullCare.style.display = "none";
+    screenBlur.style.display = "none";
+  }, 300);
 })
 
 function renderEvents() {
