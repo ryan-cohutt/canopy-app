@@ -231,7 +231,7 @@ button, .plant-card, .reminder-card, .day-reminder-card {
         padding-bottom: var(--safe-area-bottom);
         opacity: 0;
         transition: opacity 0.3s var(--ios-ease);
-        overflow-y: auto;
+        overflow-y: hidden;
         overflow-x: hidden;
         max-width: calc(100vw - 60px);
         -webkit-overflow-scrolling: touch;
