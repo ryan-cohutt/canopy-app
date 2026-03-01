@@ -140,20 +140,8 @@ const HealthCheckManager = (function() {
       ? imageBase64.split(',')[1] 
       : imageBase64;
     
-    const response = await fetch('/api/identify', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        action: 'health',
-        images: [base64Data]
-      })
-    });
-    
-    if (!response.ok) {
-      throw new Error('Health assessment request failed');
-    }
-    
-    const data = await response.json();
+    // Use PlantAPI for direct client-side API calls
+    const data = await PlantAPI.healthAssessment(base64Data);
     return parseHealthResult(data);
   }
   

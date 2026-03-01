@@ -1,8 +1,9 @@
-const CACHE_NAME = "canopy-cache-v2";
+const CACHE_NAME = "canopy-cache-v3";
 const ASSETS_TO_CACHE = [
   "/",
   "/index.html",
   "/css/style.css",
+  "/js/api-config.js",
   "/js/main.js",
   "/js/gestures.js",
   "/js/notifications.js",
