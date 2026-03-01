@@ -4,6 +4,14 @@ const installBtn = document.querySelector("#install-btn");
 const installInstructions = document.querySelector("#install-instructions");
 let deferredPrompt = null;
 
+// Dev mode bypass - check URL params or localStorage
+// Use ?dev=true in URL or set localStorage.setItem('canopy-dev-mode', 'true')
+function isDevMode() {
+  const urlParams = new URLSearchParams(window.location.search);
+  return urlParams.get('dev') === 'true' || 
+         localStorage.getItem('canopy-dev-mode') === 'true';
+}
+
 // Check if running as installed PWA (standalone mode)
 function isStandalone() {
   return window.matchMedia('(display-mode: standalone)').matches ||
@@ -13,9 +21,13 @@ function isStandalone() {
 
 // Show install screen for browser visitors, hide for installed app
 function handleInstallScreen() {
-  if (isStandalone()) {
-    // Running as installed PWA - hide install screen, show app
+  // Skip install screen in dev mode or standalone mode
+  if (isDevMode() || isStandalone()) {
+    // Running as installed PWA or in dev mode - hide install screen, show app
     if (installScreen) installScreen.style.display = 'none';
+    if (isDevMode()) {
+      console.log('[Canopy] Dev mode enabled - skipping install screen');
+    }
     return true;
   } else {
     // Running in browser - show install screen
