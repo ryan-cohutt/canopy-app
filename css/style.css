@@ -1,16 +1,81 @@
+/* ==================== iOS POLISH - GLOBAL STYLES ==================== */
+:root {
+    --safe-area-top: env(safe-area-inset-top, 0px);
+    --safe-area-bottom: env(safe-area-inset-bottom, 0px);
+    --safe-area-left: env(safe-area-inset-left, 0px);
+    --safe-area-right: env(safe-area-inset-right, 0px);
+    
+    /* iOS-style spring easing */
+    --ios-ease: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    --ios-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    --ios-decel: cubic-bezier(0, 0, 0.2, 1);
+    
+    /* Consistent border radius */
+    --radius-sm: 6px;
+    --radius-md: 9px;
+    --radius-lg: 14px;
+    --radius-xl: 20px;
+    
+    /* Colors */
+    --color-bg: #302231;
+    --color-card: #19101A;
+    --color-cream: #FCF0D9;
+    --color-green: #95DB59;
+    --color-muted: #6F5D71;
+}
+
 html {
     margin: 0;
     padding: 0;
     overflow: hidden;
     height: 100vh;
+    height: 100dvh;
+    -webkit-text-size-adjust: 100%;
 }
 
 body {
     margin: 0;
     padding: 0;
-    background-color: #302231;
+    background-color: var(--color-bg);
     overflow-y: hidden;
     height: 100vh;
+    height: 100dvh;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+    overscroll-behavior: none;
+}
+
+/* iOS-style button press states */
+button, .btn, [role="button"] {
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+    transition: transform 0.1s var(--ios-ease), opacity 0.1s var(--ios-ease);
+    cursor: pointer;
+}
+
+button:active, .btn:active, [role="button"]:active {
+    transform: scale(0.97);
+    opacity: 0.9;
+}
+
+/* Smooth momentum scrolling */
+.scrollable, [class*="overflow-y-scroll"], [style*="overflow-y: scroll"] {
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-y: contain;
+}
+
+/* Better focus states */
+button:focus-visible, input:focus-visible, select:focus-visible {
+    outline: 2px solid var(--color-green);
+    outline-offset: 2px;
+}
+
+/* Disable text selection on interactive elements */
+button, .plant-card, .reminder-card, .day-reminder-card {
+    -webkit-user-select: none;
+    user-select: none;
 }
 
 .dm-light {
@@ -117,9 +182,10 @@ body {
         grid-template-columns: 1fr 1fr 1fr;
         align-items: center;
         padding: 0px 30px 0 30px;
-        color: #FCF0D9;
+        padding-top: var(--safe-area-top);
+        color: var(--color-cream);
         opacity: 0;
-        transition: all 0.38s ease;
+        transition: opacity 0.3s var(--ios-ease);
         #grid-btn {
             background: transparent;
             border: none;
@@ -147,10 +213,11 @@ body {
     }
     #home-screen {
         display: none;
-        height: calc(100vh - 150px);
+        height: calc(100dvh - 150px - var(--safe-area-top) - var(--safe-area-bottom));
         margin: 0 30px;
+        padding-bottom: var(--safe-area-bottom);
         opacity: 0;
-        transition: all 0.28s ease;
+        transition: opacity 0.3s var(--ios-ease);
         #reminders-home {
             width: 100%;
             display: grid;
@@ -441,10 +508,12 @@ body {
         display: none;
         margin: 0 30px;
         opacity: 0;
-        transition: all 0.28s ease;
-        height: calc(100vh - 97px);
+        transition: opacity 0.3s var(--ios-ease);
+        height: calc(100dvh - 97px - var(--safe-area-top));
+        padding-bottom: var(--safe-area-bottom);
         overflow-y: scroll;
         scrollbar-width: none;
+        -webkit-overflow-scrolling: touch;
         #plants-list {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -528,12 +597,16 @@ body {
     #plant-info {
         display: none;
         grid-template-rows: min-content min-content min-content;
-        height: 100%;
+        height: calc(100dvh - var(--safe-area-top));
         margin: 0px 35px 35px 35px;
+        padding-top: var(--safe-area-top);
+        padding-bottom: calc(35px + var(--safe-area-bottom));
         opacity: 0;
-        transition: all 0.28s ease;
-        overflow: hidden;
+        transition: opacity 0.3s var(--ios-ease);
+        overflow-y: auto;
+        overflow-x: hidden;
         scrollbar-width: none;
+        -webkit-overflow-scrolling: touch;
         #plant-img {
             width: 100%;
             aspect-ratio: 1 / 1;
@@ -742,19 +815,17 @@ body {
         z-index: 4000;
         opacity: 0;
         position: absolute;
-        top: 100vh;
+        top: 100dvh;
         bottom: auto;
         width: 100%;
-        border-radius: 9px 9px 0 0;
-        background-color: #19101A;
-        /* height: min-content; */
-
+        border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+        background-color: var(--color-card);
         height: auto;
-
-        transition: all 0.18s ease;
-        -webkit-box-shadow: 0px 0px 24px 0px rgba(38,28,39,0.83); 
-        box-shadow: 0px 0px 24px 0px rgba(38,28,39,0.83);
-        max-height: 65vh;
+        padding-bottom: var(--safe-area-bottom);
+        transition: transform 0.35s var(--ios-spring), opacity 0.25s var(--ios-ease);
+        -webkit-box-shadow: 0px -4px 30px 0px rgba(0,0,0,0.4);
+        box-shadow: 0px -4px 30px 0px rgba(0,0,0,0.4);
+        max-height: calc(65dvh + var(--safe-area-bottom));
         #add-plant-close {
             margin-top: 10px;
             align-self: center;
@@ -1187,19 +1258,17 @@ body {
         z-index: 4000;
         opacity: 0;
         position: absolute;
-        top: 100vh;
+        top: 100dvh;
         bottom: auto;
         width: 100%;
-        border-radius: 9px 9px 0 0;
-        background-color: #19101A;
-        /* height: min-content; */
-
+        border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+        background-color: var(--color-card);
         height: auto;
-
-        transition: all 0.18s ease;
-        -webkit-box-shadow: 0px 0px 24px 0px rgba(38,28,39,0.83); 
-        box-shadow: 0px 0px 24px 0px rgba(38,28,39,0.83);
-        max-height: 60vh;
+        padding-bottom: var(--safe-area-bottom);
+        transition: transform 0.35s var(--ios-spring), opacity 0.25s var(--ios-ease);
+        -webkit-box-shadow: 0px -4px 30px 0px rgba(0,0,0,0.4);
+        box-shadow: 0px -4px 30px 0px rgba(0,0,0,0.4);
+        max-height: calc(60dvh + var(--safe-area-bottom));
         #add-reminder-close {
             margin-top: 10px;
             align-self: center;
@@ -1513,6 +1582,720 @@ input[type="time"] {
 }
 
 #settings-icon {
-    fill: #FCF0D9;
-    transition: all .32s ease;
+    fill: var(--color-cream);
+    transition: fill 0.32s var(--ios-ease);
+}
+
+/* ==================== iOS SCREEN TRANSITIONS ==================== */
+.screen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    will-change: transform, opacity;
+}
+
+/* Slide transition states */
+.screen-slide-enter {
+    transform: translateX(100%);
+    opacity: 1;
+}
+
+.screen-slide-enter-active {
+    transform: translateX(0);
+    transition: transform 0.35s var(--ios-ease);
+}
+
+.screen-slide-exit {
+    transform: translateX(0);
+    opacity: 1;
+}
+
+.screen-slide-exit-active {
+    transform: translateX(-30%);
+    opacity: 0.7;
+    transition: transform 0.35s var(--ios-ease), opacity 0.35s var(--ios-ease);
+}
+
+/* Swipe gesture indicator */
+.swipe-indicator {
+    position: fixed;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 4px;
+    height: 80px;
+    background: var(--color-green);
+    border-radius: 0 4px 4px 0;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    pointer-events: none;
+    z-index: 9999;
+}
+
+.swipe-indicator.active {
+    opacity: 0.6;
+}
+
+/* Bottom sheet drag handle */
+.sheet-handle {
+    width: 36px;
+    height: 5px;
+    background: var(--color-muted);
+    border-radius: 3px;
+    margin: 8px auto 4px;
+}
+
+/* Plant card hover/press states */
+.plant-card {
+    transition: transform 0.15s var(--ios-ease), box-shadow 0.15s var(--ios-ease);
+    cursor: pointer;
+}
+
+.plant-card:active {
+    transform: scale(0.97);
+}
+
+/* Reminder card states */
+.reminder-card {
+    transition: transform 0.15s var(--ios-ease), background-color 0.2s ease;
+}
+
+.reminder-card:active:not(.completed) {
+    transform: scale(0.98);
+}
+
+.reminder-card.highlight {
+    animation: highlight-pulse 0.5s ease 2;
+}
+
+@keyframes highlight-pulse {
+    0%, 100% { background-color: var(--color-card); }
+    50% { background-color: #2a1e2b; }
+}
+
+/* Loading spinner enhancement */
+.loader {
+    width: 40px;
+    height: 40px;
+    border: 3px solid var(--color-bg);
+    border-top-color: var(--color-green);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* PWA Install screen styles */
+#install-screen {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100dvh;
+    background: var(--color-bg);
+    z-index: 10000;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 30px;
+    padding: var(--safe-area-top) var(--safe-area-right) var(--safe-area-bottom) var(--safe-area-left);
+}
+
+#install-screen .logo-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+#install-screen .logo-container svg {
+    width: 120px;
+    height: auto;
+}
+
+#install-screen .install-btn {
+    background: var(--color-green);
+    color: var(--color-card);
+    border: none;
+    padding: 14px 40px;
+    border-radius: var(--radius-md);
+    font-size: 18px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+#install-screen .install-instructions {
+    color: var(--color-cream);
+    text-align: center;
+    padding: 0 40px;
+    line-height: 1.6;
+    max-width: 300px;
+}
+
+#install-screen .install-instructions strong {
+    color: var(--color-green);
+}
+
+/* Settings screen styles */
+#settings-screen {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100dvh;
+    background: var(--color-bg);
+    z-index: 5000;
+    opacity: 0;
+    transition: opacity 0.3s var(--ios-ease);
+    padding: var(--safe-area-top) 30px var(--safe-area-bottom);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+#settings-screen.active {
+    display: block;
+    opacity: 1;
+}
+
+.settings-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 0;
+    border-bottom: 1px solid rgba(252, 240, 217, 0.1);
+    margin-bottom: 20px;
+}
+
+.settings-header h1 {
+    color: var(--color-cream);
+    font-size: 28px;
+    margin: 0;
+}
+
+.settings-back-btn {
+    background: transparent;
+    border: none;
+    color: var(--color-green);
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.settings-section {
+    margin-bottom: 25px;
+}
+
+.settings-section h2 {
+    color: var(--color-green);
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin: 0 0 12px 0;
+}
+
+.settings-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--color-card);
+    padding: 14px 16px;
+    border-radius: var(--radius-md);
+    margin-bottom: 8px;
+}
+
+.settings-item span {
+    color: var(--color-cream);
+    font-size: 16px;
+}
+
+.settings-item .toggle {
+    width: 50px;
+    height: 30px;
+    background: var(--color-bg);
+    border-radius: 15px;
+    position: relative;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.settings-item .toggle.active {
+    background: var(--color-green);
+}
+
+.settings-item .toggle::after {
+    content: '';
+    position: absolute;
+    width: 24px;
+    height: 24px;
+    background: var(--color-cream);
+    border-radius: 50%;
+    top: 3px;
+    left: 3px;
+    transition: transform 0.2s var(--ios-spring);
+}
+
+.settings-item .toggle.active::after {
+    transform: translateX(20px);
+}
+
+.settings-item select {
+    background: var(--color-bg);
+    color: var(--color-cream);
+    border: none;
+    padding: 8px 12px;
+    border-radius: var(--radius-sm);
+    font-size: 14px;
+}
+
+.settings-danger-btn {
+    width: 100%;
+    background: rgba(184, 23, 76, 0.2);
+    color: rgb(184, 23, 76);
+    border: 1px solid rgb(184, 23, 76);
+    padding: 14px;
+    border-radius: var(--radius-md);
+    font-size: 16px;
+    margin-top: 8px;
+}
+
+.settings-version {
+    text-align: center;
+    color: var(--color-muted);
+    font-size: 12px;
+    margin-top: 30px;
+    padding-bottom: 20px;
+}
+
+/* ==================== JOURNAL SCREEN STYLES ==================== */
+#journal-screen {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100dvh;
+    background: var(--color-bg);
+    z-index: 5000;
+    opacity: 0;
+    transition: opacity 0.3s var(--ios-ease);
+    padding: var(--safe-area-top) 20px var(--safe-area-bottom);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.journal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 0;
+    border-bottom: 1px solid rgba(252, 240, 217, 0.1);
+    margin-bottom: 20px;
+}
+
+.journal-header h1 {
+    color: var(--color-cream);
+    font-size: 28px;
+    margin: 0;
+}
+
+.journal-back-btn {
+    background: transparent;
+    border: none;
+    color: var(--color-green);
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.journal-content {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.add-journal-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    background: var(--color-card);
+    border: 2px dashed var(--color-muted);
+    border-radius: var(--radius-md);
+    padding: 16px;
+    color: var(--color-green);
+    width: 100%;
+}
+
+.journal-entries {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.journal-entry {
+    background: var(--color-card);
+    border-radius: var(--radius-md);
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.journal-entry-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.journal-entry-date {
+    color: var(--color-green);
+    font-size: 14px;
+}
+
+.journal-entry-tags {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.journal-entry-tag {
+    background: var(--color-bg);
+    color: var(--color-cream);
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 11px;
+}
+
+.journal-entry-image {
+    width: 100%;
+    max-height: 200px;
+    object-fit: cover;
+    border-radius: var(--radius-sm);
+}
+
+.journal-entry-note {
+    color: var(--color-cream);
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+/* Add Journal Entry Bottom Sheet */
+#add-journal-card {
+    display: none;
+    z-index: 6000;
+    opacity: 0;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    background-color: var(--color-card);
+    padding-bottom: calc(20px + var(--safe-area-bottom));
+    transition: transform 0.35s var(--ios-spring), opacity 0.25s var(--ios-ease);
+    -webkit-box-shadow: 0px -4px 30px 0px rgba(0,0,0,0.4);
+    box-shadow: 0px -4px 30px 0px rgba(0,0,0,0.4);
+    max-height: 85dvh;
+    overflow-y: auto;
+}
+
+.add-journal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    border-bottom: 1px solid rgba(252, 240, 217, 0.1);
+}
+
+.add-journal-content {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.journal-photo-section {
+    display: flex;
+    justify-content: center;
+}
+
+.journal-photo-preview {
+    width: 150px;
+    height: 150px;
+    border-radius: var(--radius-md);
+    background: var(--color-bg);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    color: var(--color-muted);
+    cursor: pointer;
+    overflow: hidden;
+}
+
+.journal-photo-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.journal-date-section input {
+    width: 100%;
+    background: var(--color-bg);
+    border: none;
+    color: var(--color-cream);
+    padding: 12px;
+    border-radius: var(--radius-sm);
+    font-size: 16px;
+    margin-top: 8px;
+}
+
+.journal-tags-section {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.journal-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.journal-tag {
+    background: var(--color-bg);
+    color: var(--color-cream);
+    border: none;
+    padding: 8px 14px;
+    border-radius: 16px;
+    font-size: 13px;
+    transition: all 0.2s ease;
+}
+
+.journal-tag.selected {
+    background: var(--color-green);
+    color: var(--color-card);
+}
+
+.journal-note-section textarea {
+    width: 100%;
+    background: var(--color-bg);
+    border: none;
+    color: var(--color-cream);
+    padding: 12px;
+    border-radius: var(--radius-sm);
+    font-size: 14px;
+    resize: none;
+    margin-top: 8px;
+    font-family: inherit;
+}
+
+.journal-note-section textarea::placeholder {
+    color: var(--color-muted);
+}
+
+/* ==================== HEALTH CHECK SCREEN STYLES ==================== */
+#health-screen {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100dvh;
+    background: var(--color-bg);
+    z-index: 5000;
+    opacity: 0;
+    transition: opacity 0.3s var(--ios-ease);
+    padding: var(--safe-area-top) 20px var(--safe-area-bottom);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.health-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 0;
+    border-bottom: 1px solid rgba(252, 240, 217, 0.1);
+    margin-bottom: 20px;
+}
+
+.health-header h1 {
+    color: var(--color-cream);
+    font-size: 28px;
+    margin: 0;
+}
+
+.health-back-btn {
+    background: transparent;
+    border: none;
+    color: var(--color-green);
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.health-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px 0;
+}
+
+.health-capture {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 40px 20px;
+}
+
+.health-icon {
+    color: var(--color-green);
+    margin-bottom: 20px;
+}
+
+.health-action-btn {
+    background: var(--color-green);
+    color: var(--color-card);
+    border: none;
+    padding: 14px 30px;
+    border-radius: var(--radius-md);
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.health-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 60px 20px;
+}
+
+.health-results {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.health-status {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    background: var(--color-card);
+    padding: 20px;
+    border-radius: var(--radius-md);
+}
+
+.health-status-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 30px;
+}
+
+.health-status-icon.healthy {
+    background: rgba(149, 219, 89, 0.2);
+    color: var(--color-green);
+}
+
+.health-status-icon.unhealthy {
+    background: rgba(184, 23, 76, 0.2);
+    color: rgb(184, 23, 76);
+}
+
+.health-status-text h3 {
+    color: var(--color-cream);
+    margin: 0 0 5px 0;
+    font-size: 18px;
+}
+
+.health-status-text p {
+    color: var(--color-muted);
+    margin: 0;
+    font-size: 14px;
+}
+
+.health-issue-card {
+    background: var(--color-card);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+}
+
+.health-issue-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    cursor: pointer;
+}
+
+.health-issue-name {
+    color: var(--color-cream);
+    font-size: 16px;
+}
+
+.health-issue-probability {
+    color: var(--color-green);
+    font-size: 14px;
+}
+
+.health-issue-details {
+    padding: 0 15px 15px;
+    border-top: 1px solid rgba(252, 240, 217, 0.1);
+}
+
+.health-issue-details h4 {
+    color: var(--color-green);
+    font-size: 14px;
+    margin: 15px 0 8px 0;
+}
+
+.health-issue-details p {
+    color: var(--color-cream);
+    font-size: 13px;
+    line-height: 1.5;
+    margin: 0;
+}
+
+.health-action-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.health-action-buttons button {
+    flex: 1;
+    padding: 12px;
+    border-radius: var(--radius-md);
+    font-size: 14px;
+}
+
+.health-new-check-btn {
+    background: var(--color-card);
+    border: 1px solid var(--color-green);
+    color: var(--color-green);
+}
+
+.health-save-btn {
+    background: var(--color-green);
+    border: none;
+    color: var(--color-card);
 }
