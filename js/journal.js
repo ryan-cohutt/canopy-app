@@ -17,10 +17,8 @@ const JournalManager = (function() {
   const journalScreen = document.getElementById('journal-screen');
   const journalBackBtn = document.getElementById('journal-back-btn');
   const journalPlantName = document.getElementById('journal-plant-name');
-  const journalEntriesContainer = document.getElementById('journal-entries');
   const addJournalEntryBtn = document.getElementById('add-journal-entry-btn');
   
-  const addJournalCard = document.getElementById('add-journal-card');
   const journalEntryCloseBtn = document.getElementById('journal-entry-close-btn');
   const saveJournalEntryBtn = document.getElementById('save-journal-entry-btn');
   const journalPhotoPreview = document.getElementById('journal-photo-preview');
@@ -146,12 +144,13 @@ const JournalManager = (function() {
   
   // Render journal entries
   function renderEntries() {
-    if (!journalEntriesContainer || !currentPlantId) return;
+    const container = document.getElementById('journal-entries');
+    if (!container || !currentPlantId) return;
     
     const entries = journalEntries[currentPlantId] || [];
     
     if (entries.length === 0) {
-      journalEntriesContainer.innerHTML = `
+      container.innerHTML = `
         <div style="text-align: center; padding: 40px 20px; color: var(--color-muted);">
           <p class="dm-light">No journal entries yet.</p>
           <p class="dm-light" style="font-size: 13px;">Tap "Add Entry" to start tracking your plant's growth.</p>
@@ -163,7 +162,7 @@ const JournalManager = (function() {
     // Sort entries by date (newest first)
     const sortedEntries = [...entries].sort((a, b) => new Date(b.date) - new Date(a.date));
     
-    journalEntriesContainer.innerHTML = sortedEntries.map((entry) => `
+    container.innerHTML = sortedEntries.map((entry) => `
       <div class="journal-entry" data-entry-id="${entry.id}">
         <div class="journal-entry-header">
           <span class="journal-entry-date dm-reg">${formatDate(entry.date)}</span>
@@ -306,9 +305,14 @@ const JournalManager = (function() {
     // Re-render entries immediately
     renderEntries();
 
+    requestAnimationFrame(() => {
+      const container = document.getElementById('journal-entries');
+      if (container) container.style.willChange = 'transform';
+    });
+
     // force repaint (mobile Safari hack)
     requestAnimationFrame(() => {
-      journalEntriesContainer.style.transform = 'translateZ(0)';
+      container.style.transform = 'translateZ(0)';
     });
   }
   
@@ -363,26 +367,34 @@ const JournalManager = (function() {
   
   // Open add entry sheet
   function openAddEntrySheet() {
+    const card = document.getElementById('add-journal-card');
+
+    if (!card) {
+      console.warn('add-journal-card not found');
+      return;
+    }
+
     resetEntryForm();
     isEditMode = false;
     editingEntryId = null;
     
     // Update header text for new entry
-    const headerTitle = addJournalCard.querySelector('.add-journal-header h2');
+    const headerTitle = card.querySelector('.add-journal-header h2');
     if (headerTitle) {
       headerTitle.textContent = 'New Entry';
     }
     
     // Set default date to today
-    if (journalEntryDate) {
-      journalEntryDate.value = new Date().toISOString().split('T')[0];
+    const dateInput = document.getElementById('journal-entry-date');
+    if (dateInput) {
+      dateInput.value = new Date().toISOString().split('T')[0];
     }
     
     if (window.TransitionManager) {
-      TransitionManager.bottomSheetOpen(addJournalCard);
-    } else if (addJournalCard) {
-      addJournalCard.style.display = 'block';
-      addJournalCard.style.opacity = '1';
+      TransitionManager.bottomSheetOpen(card);
+    } else {
+      card.style.display = 'block';
+      card.style.opacity = '1';
     }
   }
   
@@ -502,12 +514,20 @@ const JournalManager = (function() {
     resetEntryForm();
     renderEntries();
 
-    // Then just animate
-    if (window.TransitionManager) {
-      TransitionManager.bottomSheetClose(addJournalCard);
-    } else if (addJournalCard) {
-      addJournalCard.style.display = 'none';
-    }
+    requestAnimationFrame(() => {
+      const container = document.getElementById('journal-entries');
+      if (container) container.style.willChange = 'transform';
+    });
+
+    requestAnimationFrame(() => {
+      const card = document.getElementById('add-journal-card');
+
+      if (window.TransitionManager && card) {
+        TransitionManager.bottomSheetClose(card);
+      } else if (card) {
+        card.style.display = 'none';
+      }
+    });
   }
   
   // Add health check entry
