@@ -226,6 +226,9 @@ const JournalManager = (function() {
   // Open edit entry sheet with populated data
   function openEditEntrySheet(entryId) {
     if (!currentPlantId) return;
+
+    const card = document.getElementById('add-journal-card');
+    if (!card) return;
     
     const entries = journalEntries[currentPlantId] || [];
     const entry = entries.find(e => e.id === entryId);
@@ -236,7 +239,7 @@ const JournalManager = (function() {
     editingEntryId = entryId;
     
     // Update header text
-    const headerTitle = addJournalCard.querySelector('.add-journal-header h2');
+    const headerTitle = card.querySelector('.add-journal-header h2');
     if (headerTitle) {
       headerTitle.textContent = 'Edit Entry';
     }
@@ -271,10 +274,10 @@ const JournalManager = (function() {
     
     // Open sheet
     if (window.TransitionManager) {
-      TransitionManager.bottomSheetOpen(addJournalCard);
-    } else if (addJournalCard) {
-      addJournalCard.style.display = 'grid';
-      addJournalCard.style.opacity = '1';
+      TransitionManager.bottomSheetOpen(card);
+    } else if (card) {
+      card.style.display = 'grid';
+      card.style.opacity = '1';
     }
   }
   
@@ -400,17 +403,19 @@ const JournalManager = (function() {
   
   // Close add entry sheet
   function closeAddEntrySheet() {
+    const card = document.getElementById('add-journal-card');
+
     isEditMode = false;
     editingEntryId = null;
     
-    if (window.TransitionManager) {
-      TransitionManager.bottomSheetClose(addJournalCard, resetEntryForm);
-    } else if (addJournalCard) {
-      addJournalCard.style.display = 'none';
+    if (window.TransitionManager && card) {
+      TransitionManager.bottomSheetClose(card, resetEntryForm);
+    } else if (card) {
+      card.style.display = 'none';
       resetEntryForm();
     }
   }
-  
+    
   // Reset entry form
   function resetEntryForm() {
     currentPhotoData = null;
