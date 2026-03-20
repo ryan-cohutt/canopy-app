@@ -518,15 +518,24 @@ const JournalManager = (function() {
     // Close sheet first, then render after animation completes
     const card = document.getElementById('add-journal-card');
 
-    if (window.TransitionManager && card) {
-      TransitionManager.bottomSheetClose(card, () => {
-        resetEntryForm();
-        renderEntries();
-      });
-    } else if (card) {
-      card.style.display = 'none';
+    let didRun = false;
+
+    const afterClose = () => {
+      if (didRun) return;
+      didRun = true;
+
       resetEntryForm();
       renderEntries();
+    };
+
+    if (window.TransitionManager && card) {
+      TransitionManager.bottomSheetClose(card, afterClose);
+
+      // 🛟 FAILSAFE: run anyway if animation never calls back
+      setTimeout(afterClose, 400); // match your animation duration
+    } else if (card) {
+      card.style.display = 'none';
+      afterClose();
     }
   }
   
