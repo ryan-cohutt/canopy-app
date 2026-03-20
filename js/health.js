@@ -25,10 +25,9 @@ const HealthCheckManager = (function() {
   
   // Setup event listeners
   function setupEventListeners() {
-    // Open button
-    if (healthOpenBtn) {
-      healthOpenBtn.addEventListener('click', openHealthCheck)
-    }
+    // NOTE: healthOpenBtn is wired in main.js with plantId/plantName args.
+    // Do NOT bind openHealthCheck directly to click here — the click event
+    // object would overwrite plantId with a MouseEvent.
 
     // Back button
     if (healthBackBtn) {
@@ -63,12 +62,18 @@ const HealthCheckManager = (function() {
     showCaptureState();
     
     if (healthScreen) {
-      healthScreen.style.display = 'block';
-      healthScreen.style.opacity = '0';
-      requestAnimationFrame(() => {
-        healthScreen.style.opacity = '1';
-      });
-      
+      const plantInfoScreen = document.getElementById('plant-info');
+
+      if (window.TransitionManager && plantInfoScreen) {
+        TransitionManager.slideTransition(plantInfoScreen, healthScreen, 'forward');
+      } else {
+        healthScreen.style.display = 'block';
+        healthScreen.style.opacity = '0';
+        requestAnimationFrame(() => {
+          healthScreen.style.opacity = '1';
+        });
+      }
+
       if (window.NavigationManager) {
         NavigationManager.pushScreen('health-screen');
       }
@@ -78,10 +83,16 @@ const HealthCheckManager = (function() {
   // Close health check screen
   function closeHealthScreen() {
     if (healthScreen) {
-      healthScreen.style.opacity = '0';
-      setTimeout(() => {
-        healthScreen.style.display = 'none';
-      }, 300);
+      const plantInfoScreen = document.getElementById('plant-info');
+
+      if (window.TransitionManager && plantInfoScreen) {
+        TransitionManager.slideTransition(healthScreen, plantInfoScreen, 'back');
+      } else {
+        healthScreen.style.opacity = '0';
+        setTimeout(() => {
+          healthScreen.style.display = 'none';
+        }, 300);
+      }
     }
   }
   
@@ -259,16 +270,21 @@ const HealthCheckManager = (function() {
   
   // Save health check to journal
   function saveToJournal() {
-    if (!currentPlantId || !currentHealthResult) return;
+    if (!currentPlantId || !currentHealthResult) {
+      alert('No health check result to save.');
+      return;
+    }
     
     if (window.JournalManager) {
+      // Sync JournalManager's currentPlantId before adding the entry
+      JournalManager.setCurrentPlant(currentPlantId);
       JournalManager.addHealthCheckEntry(
-        currentPlantId, 
-        currentHealthResult, 
+        currentPlantId,
+        currentHealthResult,
         currentPhotoData
       );
       
-      alert('Health check saved to journal!');
+      // Navigate back without alert — the entry appearing in the journal is confirmation enough
       closeHealthScreen();
     }
   }

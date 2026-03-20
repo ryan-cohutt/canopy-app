@@ -201,125 +201,105 @@ const NavigationManager = (function() {
 
 const TransitionManager = (function() {
   const TRANSITION_DURATION = 320;
-  const EASE_CURVE = 'cubic-bezier(0.32, 0.72, 0, 1)'; // iOS-style deceleration curve
-  
-  // Track if a transition is in progress to prevent overlap
+  const EASE_CURVE = 'cubic-bezier(0.32, 0.72, 0, 1)';
+
   let isTransitioning = false;
+  let transitionTimer = null;
 
   function slideTransition(fromEl, toEl, direction = 'forward', callback) {
     if (!fromEl || !toEl) {
       if (callback) callback();
       return;
     }
-    
-    // Prevent overlapping transitions
+
+    // If a transition is already running, force-complete it immediately
+    // before starting the new one so screens never get stuck
     if (isTransitioning) {
-      return;
+      if (transitionTimer) {
+        clearTimeout(transitionTimer);
+        transitionTimer = null;
+      }
+      // Clean up any lingering animation containers
+      document.querySelectorAll('.transition-container').forEach(el => el.remove());
+      // Reset all screen styles that might be mid-animation
+      document.querySelectorAll('section').forEach(el => {
+        el.style.transition = '';
+        el.style.transform = '';
+      });
+      isTransitioning = false;
     }
+
     isTransitioning = true;
 
-    // Create a container for both screens to ensure proper layering
-    const container = document.createElement('div');
-    container.style.cssText = `
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
-      z-index: 9999;
-      background: var(--color-bg);
-    `;
-    document.body.appendChild(container);
+    // Position both screens for animation without cloning —
+    // cloning loses scroll state and can snapshot stale content
+    const toStartX = direction === 'forward' ? '100%' : '-25%';
+    const fromEndX = direction === 'forward' ? '-25%' : '100%';
 
-    // Clone both elements into the container for clean animation
-    const fromClone = fromEl.cloneNode(true);
-    const toClone = toEl.cloneNode(true);
-    
-    // Style the clones for animation
-    fromClone.style.cssText = `
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      display: grid;
-      opacity: 1;
-      transform: translateX(0);
-      z-index: ${direction === 'forward' ? '1' : '2'};
-      will-change: transform, opacity;
-      pointer-events: none;
-    `;
-    
-    toClone.style.cssText = `
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      display: grid;
-      opacity: ${direction === 'forward' ? '1' : '0.85'};
-      transform: translateX(${direction === 'forward' ? '100%' : '-25%'});
-      z-index: ${direction === 'forward' ? '2' : '1'};
-      will-change: transform, opacity;
-      pointer-events: none;
-    `;
+    // Make sure destination is visible but off-screen
+    toEl.style.display = 'grid';
+    toEl.style.opacity = direction === 'forward' ? '1' : '0.85';
+    toEl.style.transform = `translateX(${toStartX})`;
+    toEl.style.transition = 'none';
+    toEl.style.position = 'fixed';
+    toEl.style.top = '0';
+    toEl.style.left = '0';
+    toEl.style.width = '100%';
+    toEl.style.zIndex = direction === 'forward' ? '5001' : '4999';
 
-    container.appendChild(fromClone);
-    container.appendChild(toClone);
+    fromEl.style.transition = 'none';
+    fromEl.style.transform = 'translateX(0)';
+    fromEl.style.opacity = '1';
+    fromEl.style.position = 'fixed';
+    fromEl.style.top = '0';
+    fromEl.style.left = '0';
+    fromEl.style.width = '100%';
+    fromEl.style.zIndex = direction === 'forward' ? '4999' : '5001';
 
-    // Hide originals immediately
-    fromEl.style.display = 'none';
-    
-    // Force reflow
-    void toClone.offsetWidth;
+    // Force a reflow so the browser registers the start positions
+    void toEl.offsetWidth;
+    void fromEl.offsetWidth;
 
-    // Apply transitions
-    fromClone.style.transition = `transform ${TRANSITION_DURATION}ms ${EASE_CURVE}, opacity ${TRANSITION_DURATION}ms ${EASE_CURVE}`;
-    toClone.style.transition = `transform ${TRANSITION_DURATION}ms ${EASE_CURVE}, opacity ${TRANSITION_DURATION}ms ${EASE_CURVE}`;
-
-    // Animate
+    // Apply transitions and animate in a single rAF — no double rAF needed
+    // because we forced reflow above
     requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        if (direction === 'forward') {
-          // Forward: new screen slides in from right, old slides left
-          toClone.style.transform = 'translateX(0)';
-          fromClone.style.transform = 'translateX(-25%)';
-          fromClone.style.opacity = '0.85';
-        } else {
-          // Back: old screen slides out to right, new slides in from left
-          fromClone.style.transform = 'translateX(100%)';
-          fromClone.style.opacity = '0.85';
-          toClone.style.transform = 'translateX(0)';
-          toClone.style.opacity = '1';
-        }
-      });
+      const t = `transform ${TRANSITION_DURATION}ms ${EASE_CURVE}, opacity ${TRANSITION_DURATION}ms ${EASE_CURVE}`;
+      toEl.style.transition = t;
+      fromEl.style.transition = t;
+
+      toEl.style.transform = 'translateX(0)';
+      toEl.style.opacity = '1';
+      fromEl.style.transform = `translateX(${fromEndX})`;
+      fromEl.style.opacity = direction === 'forward' ? '0.85' : '1';
     });
 
-    setTimeout(() => {
-      // Show the real destination element
-      toEl.style.display = 'grid';
-      toEl.style.opacity = '1';
-      toEl.style.transform = '';
-      
-      // Clean up from element
+    transitionTimer = setTimeout(() => {
+      transitionTimer = null;
+
+      // Clean up fromEl — hide it and reset all inline styles
+      fromEl.style.display = 'none';
       fromEl.style.position = '';
       fromEl.style.transform = '';
       fromEl.style.opacity = '';
       fromEl.style.transition = '';
       fromEl.style.zIndex = '';
-      
-      // Remove the animation container
-      if (container.parentNode) {
-        container.parentNode.removeChild(container);
-      }
-      
-      isTransitioning = false;
+      fromEl.style.top = '';
+      fromEl.style.left = '';
+      fromEl.style.width = '';
 
+      // Clean up toEl — it's now the active screen, just reset positioning
+      toEl.style.position = '';
+      toEl.style.transform = '';
+      toEl.style.opacity = '1';
+      toEl.style.transition = '';
+      toEl.style.zIndex = '';
+      toEl.style.top = '';
+      toEl.style.left = '';
+      toEl.style.width = '';
+
+      isTransitioning = false;
       if (callback) callback();
-    }, TRANSITION_DURATION + 16); // Add a small buffer for smoother completion
+    }, TRANSITION_DURATION + 20);
   }
 
   function fadeTransition(fromEl, toEl, callback) {
@@ -328,18 +308,22 @@ const TransitionManager = (function() {
       return;
     }
 
-    fromEl.style.transition = `opacity 200ms ease`;
+    fromEl.style.transition = 'opacity 200ms ease';
     fromEl.style.opacity = '0';
 
     setTimeout(() => {
       fromEl.style.display = 'none';
       fromEl.style.transition = '';
-      
+      fromEl.style.opacity = '';
+
       toEl.style.display = 'grid';
       toEl.style.opacity = '0';
-      
+      toEl.style.transition = 'none';
+
+      void toEl.offsetWidth;
+
       requestAnimationFrame(() => {
-        toEl.style.transition = `opacity 200ms ease`;
+        toEl.style.transition = 'opacity 200ms ease';
         toEl.style.opacity = '1';
       });
 
@@ -353,16 +337,17 @@ const TransitionManager = (function() {
   function bottomSheetOpen(sheetEl) {
     if (!sheetEl) return;
 
-    // Prepare sheet for animation
-    sheetEl.style.display = 'grid';
+    sheetEl.style.transition = 'none';
     sheetEl.style.transform = 'translateY(100%)';
     sheetEl.style.opacity = '1';
+    sheetEl.style.display = 'grid';
     sheetEl.style.bottom = '0';
     sheetEl.style.top = 'auto';
-    
-    // Force reflow
+
+    // Force reflow so translateY(100%) is the committed start position
     void sheetEl.offsetWidth;
 
+    // Single rAF is safe here because reflow above committed the start state
     requestAnimationFrame(() => {
       sheetEl.style.transition = 'transform 0.38s cubic-bezier(0.32, 0.72, 0, 1)';
       sheetEl.style.transform = 'translateY(0)';
@@ -374,6 +359,9 @@ const TransitionManager = (function() {
       if (callback) callback();
       return;
     }
+
+    // Force reflow to commit current position before animating out
+    void sheetEl.offsetWidth;
 
     sheetEl.style.transition = 'transform 0.28s cubic-bezier(0.32, 0.72, 0, 1)';
     sheetEl.style.transform = 'translateY(100%)';

@@ -465,74 +465,80 @@ const JournalManager = (function() {
   }
   
   // Save journal entry (handles both new and edit)
-  function saveEntry() {
-    if (!currentPlantId) return;
+function saveEntry() {
+  if (!currentPlantId) return;
 
-    const date = journalEntryDate?.value || new Date().toISOString().split('T')[0];
-    const note = journalEntryNote?.value?.trim() || '';
+  const date = journalEntryDate?.value || new Date().toISOString().split('T')[0];
+  const note = journalEntryNote?.value?.trim() || '';
 
-    if (!currentPhotoData && !note) {
-      alert('Please add a photo or note for your journal entry.');
-      return;
-    }
+  if (!currentPhotoData && !note) {
+    alert('Please add a photo or note for your journal entry.');
+    return;
+  }
 
-    if (!journalEntries[currentPlantId]) {
-      journalEntries[currentPlantId] = [];
-    }
+  if (!journalEntries[currentPlantId]) {
+    journalEntries[currentPlantId] = [];
+  }
 
-    if (isEditMode && editingEntryId) {
-      const entryIndex = journalEntries[currentPlantId].findIndex(e => e.id === editingEntryId);
-      if (entryIndex !== -1) {
-        journalEntries[currentPlantId][entryIndex] = {
-          ...journalEntries[currentPlantId][entryIndex],
-          date,
-          photo: currentPhotoData,
-          note,
-          tags: [...selectedTags],
-          updatedAt: new Date().toISOString()
-        };
-      }
-    } else {
-      journalEntries[currentPlantId].push({
-        id: Date.now().toString(),
+  if (isEditMode && editingEntryId) {
+    const entryIndex = journalEntries[currentPlantId].findIndex(e => e.id === editingEntryId);
+    if (entryIndex !== -1) {
+      journalEntries[currentPlantId][entryIndex] = {
+        ...journalEntries[currentPlantId][entryIndex],
         date,
         photo: currentPhotoData,
         note,
         tags: [...selectedTags],
-        createdAt: new Date().toISOString()
-      });
+        updatedAt: new Date().toISOString()
+      };
     }
-
-    saveJournalEntries();
-    updatePlantPhotoToLatest();
-
-    // Exactly what closeAddEntrySheet does:
-    const card = document.getElementById('add-journal-card');
-    isEditMode = false;
-    editingEntryId = null;
-    if (window.TransitionManager && card) {
-      TransitionManager.bottomSheetClose(card, resetEntryForm);
-    } else if (card) {
-      card.style.display = 'none';
-      resetEntryForm();
-    }
-
-    // Exactly what deleteEntry does to update the list:
-    renderEntries();
-    requestAnimationFrame(() => {
-      const container = document.getElementById('journal-entries');
-      if (container) container.style.willChange = 'transform';
-    });
-    requestAnimationFrame(() => {
-      const container = document.getElementById('journal-entries');
-      if (container) container.style.transform = 'translateZ(0)';
+  } else {
+    journalEntries[currentPlantId].push({
+      id: Date.now().toString(),
+      date,
+      photo: currentPhotoData,
+      note,
+      tags: [...selectedTags],
+      createdAt: new Date().toISOString()
     });
   }
+
+  saveJournalEntries();
+  updatePlantPhotoToLatest();
+
+  // 1. Dismiss keyboard first — critical on mobile
+  if (document.activeElement) {
+    document.activeElement.blur();
+  }
+
+  const card = document.getElementById('add-journal-card');
+
+  // 2. Close the sheet, and only render entries AFTER it's done
+  if (window.TransitionManager && card) {
+    TransitionManager.bottomSheetClose(card, () => {
+      resetEntryForm();
+      renderEntries();
+    });
+  } else if (card) {
+    card.style.display = 'none';
+    resetEntryForm();
+    renderEntries();
+  }
+}
   
+  // Set current plant without opening journal screen.
+  // Call this from health.js before addHealthCheckEntry so currentPlantId is valid.
+  function setCurrentPlant(plantId) {
+    currentPlantId = plantId;
+  }
+
   // Add health check entry
   function addHealthCheckEntry(plantId, healthData, photo) {
     if (!plantId) return;
-    
+
+    // Always sync currentPlantId so renderEntries() works if journal is open
+    currentPlantId = plantId;
+
     if (!journalEntries[plantId]) {
       journalEntries[plantId] = [];
     }
@@ -555,6 +561,12 @@ const JournalManager = (function() {
     // Update plant's display photo
     if (photo) {
       updatePlantDisplayPhoto(plantId, photo);
+    }
+
+    // If journal screen is already open for this plant, refresh the list
+    const journalScreenEl = document.getElementById('journal-screen');
+    if (journalScreenEl && journalScreenEl.style.display !== 'none') {
+      renderEntries();
     }
   }
   
@@ -607,6 +619,7 @@ const JournalManager = (function() {
     openJournal,
     closeJournalScreen,
     addHealthCheckEntry,
+    setCurrentPlant,
     getLatestPhoto,
     getEntries
   };
