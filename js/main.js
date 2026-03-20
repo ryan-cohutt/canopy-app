@@ -886,7 +886,7 @@ window.addEventListener('plant-photo-updated', () => {
     }
     
     // Health check button handler
-    const healthBtn = document.querySelector("#plant-health-check");
+    const healthBtn = document.querySelector("#health-check");
     if (healthBtn) {
       healthBtn.onclick = () => {
         if (window.HealthCheckManager) {

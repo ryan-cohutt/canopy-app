@@ -16,7 +16,7 @@ const HealthCheckManager = (function() {
   const healthCameraInput = document.getElementById('health-camera-input');
   const healthLoading = document.getElementById('health-loading');
   const healthResults = document.getElementById('health-results');
-  const healthOpenBtn = document.getElementById('health-check')
+  const healthOpenBtn = null; // wired in main.js via openPlantInfo
   
   // Initialize
   function init() {
