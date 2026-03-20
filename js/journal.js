@@ -528,14 +528,15 @@ const JournalManager = (function() {
       renderEntries();
     };
 
-    if (window.TransitionManager && card) {
-      TransitionManager.bottomSheetClose(card, afterClose);
+    // ALWAYS update immediately
+    renderEntries();
 
-      // 🛟 FAILSAFE: run anyway if animation never calls back
-      setTimeout(afterClose, 400); // match your animation duration
+    // Then close UI separately
+    if (window.TransitionManager && card) {
+      TransitionManager.bottomSheetClose(card, resetEntryForm);
     } else if (card) {
       card.style.display = 'none';
-      afterClose();
+      resetEntryForm();
     }
   }
   
