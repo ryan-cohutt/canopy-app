@@ -65,7 +65,11 @@ const JournalManager = (function() {
     
     // Save entry
     if (saveJournalEntryBtn) {
-      saveJournalEntryBtn.addEventListener('click', saveEntry);
+      saveJournalEntryBtn.addEventListener('pointerup', (e) => {
+        e.stopPropagation();
+        e.preventDefault();
+        saveEntry();
+      });
     }
     
     // Photo selection
