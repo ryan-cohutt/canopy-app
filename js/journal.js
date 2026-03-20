@@ -65,11 +65,7 @@ const JournalManager = (function() {
     
     // Save entry
     if (saveJournalEntryBtn) {
-      saveJournalEntryBtn.addEventListener('pointerup', (e) => {
-        e.stopPropagation();
-        e.preventDefault();
-        saveEntry();
-      });
+      saveJournalEntryBtn.addEventListener('click', saveEntry);
     }
     
     // Photo selection
@@ -469,80 +465,66 @@ const JournalManager = (function() {
   }
   
   // Save journal entry (handles both new and edit)
-  function saveEntry() {
-    if (!currentPlantId) return;
-    
-    const date = journalEntryDate?.value || new Date().toISOString().split('T')[0];
-    const note = journalEntryNote?.value?.trim() || '';
-    
-    // Require at least a photo or note
-    if (!currentPhotoData && !note) {
-      alert('Please add a photo or note for your journal entry.');
-      return;
-    }
-    
-    // Initialize entries array for this plant if needed
-    if (!journalEntries[currentPlantId]) {
-      journalEntries[currentPlantId] = [];
-    }
-    
-    if (isEditMode && editingEntryId) {
-      // Update existing entry
-      const entryIndex = journalEntries[currentPlantId].findIndex(e => e.id === editingEntryId);
-      
-      if (entryIndex !== -1) {
-        journalEntries[currentPlantId][entryIndex] = {
-          ...journalEntries[currentPlantId][entryIndex],
-          date: date,
-          photo: currentPhotoData,
-          note: note,
-          tags: [...selectedTags],
-          updatedAt: new Date().toISOString()
-        };
-      }
-    } else {
-      // Create new entry
-      const entry = {
-        id: Date.now().toString(),
-        date: date,
+function saveEntry() {
+  if (!currentPlantId) return;
+
+  const date = journalEntryDate?.value || new Date().toISOString().split('T')[0];
+  const note = journalEntryNote?.value?.trim() || '';
+
+  if (!currentPhotoData && !note) {
+    alert('Please add a photo or note for your journal entry.');
+    return;
+  }
+
+  if (!journalEntries[currentPlantId]) {
+    journalEntries[currentPlantId] = [];
+  }
+
+  if (isEditMode && editingEntryId) {
+    const entryIndex = journalEntries[currentPlantId].findIndex(e => e.id === editingEntryId);
+    if (entryIndex !== -1) {
+      journalEntries[currentPlantId][entryIndex] = {
+        ...journalEntries[currentPlantId][entryIndex],
+        date,
         photo: currentPhotoData,
-        note: note,
+        note,
         tags: [...selectedTags],
-        createdAt: new Date().toISOString()
+        updatedAt: new Date().toISOString()
       };
-      
-      journalEntries[currentPlantId].push(entry);
     }
-    
-    saveJournalEntries();
-    
-    // Update plant's display photo to the latest dated entry with a photo
-    updatePlantPhotoToLatest();
-    
-    // Close sheet first, then render after animation completes
-    const card = document.getElementById('add-journal-card');
+  } else {
+    journalEntries[currentPlantId].push({
+      id: Date.now().toString(),
+      date,
+      photo: currentPhotoData,
+      note,
+      tags: [...selectedTags],
+      createdAt: new Date().toISOString()
+    });
+  }
 
-    let didRun = false;
+  saveJournalEntries();
+  updatePlantPhotoToLatest();
 
-    const afterClose = () => {
-      if (didRun) return;
-      didRun = true;
+  // 1. Dismiss keyboard first — critical on mobile
+  if (document.activeElement) {
+    document.activeElement.blur();
+  }
 
+  const card = document.getElementById('add-journal-card');
+
+  // 2. Close the sheet, and only render entries AFTER it's done
+  if (window.TransitionManager && card) {
+    TransitionManager.bottomSheetClose(card, () => {
       resetEntryForm();
       renderEntries();
-    };
-
-    // ALWAYS update immediately
+    });
+  } else if (card) {
+    card.style.display = 'none';
+    resetEntryForm();
     renderEntries();
-
-    // Then close UI separately
-    if (window.TransitionManager && card) {
-      TransitionManager.bottomSheetClose(card, resetEntryForm);
-    } else if (card) {
-      card.style.display = 'none';
-      resetEntryForm();
-    }
   }
+}
   
   // Add health check entry
   function addHealthCheckEntry(plantId, healthData, photo) {
