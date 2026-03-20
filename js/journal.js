@@ -506,24 +506,22 @@ function saveEntry() {
   saveJournalEntries();
   updatePlantPhotoToLatest();
 
-  // 1. Dismiss keyboard first — critical on mobile
-  if (document.activeElement) {
-    document.activeElement.blur();
-  }
+  if (document.activeElement) document.activeElement.blur();
 
+  // Render immediately — don't gate it behind the animation at all
+  resetEntryForm();
+  renderEntries();
+
+  // Give the open animation time to fully commit before reversing it,
+  // then close with no callback needed since we already rendered above
   const card = document.getElementById('add-journal-card');
-
-  // 2. Close the sheet, and only render entries AFTER it's done
-  if (window.TransitionManager && card) {
-    TransitionManager.bottomSheetClose(card, () => {
-      resetEntryForm();
-      renderEntries();
-    });
-  } else if (card) {
-    card.style.display = 'none';
-    resetEntryForm();
-    renderEntries();
-  }
+  setTimeout(() => {
+    if (window.TransitionManager && card) {
+      TransitionManager.bottomSheetClose(card);
+    } else if (card) {
+      card.style.display = 'none';
+    }
+  }, 50); // just enough for iOS to finish committing the open rAF
 }
   
   // Add health check entry
