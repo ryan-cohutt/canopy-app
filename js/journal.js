@@ -465,64 +465,69 @@ const JournalManager = (function() {
   }
   
   // Save journal entry (handles both new and edit)
-function saveEntry() {
-  if (!currentPlantId) return;
+  function saveEntry() {
+    if (!currentPlantId) return;
 
-  const date = journalEntryDate?.value || new Date().toISOString().split('T')[0];
-  const note = journalEntryNote?.value?.trim() || '';
+    const date = journalEntryDate?.value || new Date().toISOString().split('T')[0];
+    const note = journalEntryNote?.value?.trim() || '';
 
-  if (!currentPhotoData && !note) {
-    alert('Please add a photo or note for your journal entry.');
-    return;
-  }
+    if (!currentPhotoData && !note) {
+      alert('Please add a photo or note for your journal entry.');
+      return;
+    }
 
-  if (!journalEntries[currentPlantId]) {
-    journalEntries[currentPlantId] = [];
-  }
+    if (!journalEntries[currentPlantId]) {
+      journalEntries[currentPlantId] = [];
+    }
 
-  if (isEditMode && editingEntryId) {
-    const entryIndex = journalEntries[currentPlantId].findIndex(e => e.id === editingEntryId);
-    if (entryIndex !== -1) {
-      journalEntries[currentPlantId][entryIndex] = {
-        ...journalEntries[currentPlantId][entryIndex],
+    if (isEditMode && editingEntryId) {
+      const entryIndex = journalEntries[currentPlantId].findIndex(e => e.id === editingEntryId);
+      if (entryIndex !== -1) {
+        journalEntries[currentPlantId][entryIndex] = {
+          ...journalEntries[currentPlantId][entryIndex],
+          date,
+          photo: currentPhotoData,
+          note,
+          tags: [...selectedTags],
+          updatedAt: new Date().toISOString()
+        };
+      }
+    } else {
+      journalEntries[currentPlantId].push({
+        id: Date.now().toString(),
         date,
         photo: currentPhotoData,
         note,
         tags: [...selectedTags],
-        updatedAt: new Date().toISOString()
-      };
+        createdAt: new Date().toISOString()
+      });
     }
-  } else {
-    journalEntries[currentPlantId].push({
-      id: Date.now().toString(),
-      date,
-      photo: currentPhotoData,
-      note,
-      tags: [...selectedTags],
-      createdAt: new Date().toISOString()
-    });
-  }
 
-  saveJournalEntries();
-  updatePlantPhotoToLatest();
+    saveJournalEntries();
+    updatePlantPhotoToLatest();
 
-  if (document.activeElement) document.activeElement.blur();
-
-  // Render immediately — don't gate it behind the animation at all
-  resetEntryForm();
-  renderEntries();
-
-  // Give the open animation time to fully commit before reversing it,
-  // then close with no callback needed since we already rendered above
-  const card = document.getElementById('add-journal-card');
-  setTimeout(() => {
+    // Exactly what closeAddEntrySheet does:
+    const card = document.getElementById('add-journal-card');
+    isEditMode = false;
+    editingEntryId = null;
     if (window.TransitionManager && card) {
-      TransitionManager.bottomSheetClose(card);
+      TransitionManager.bottomSheetClose(card, resetEntryForm);
     } else if (card) {
       card.style.display = 'none';
+      resetEntryForm();
     }
-  }, 50); // just enough for iOS to finish committing the open rAF
-}
+
+    // Exactly what deleteEntry does to update the list:
+    renderEntries();
+    requestAnimationFrame(() => {
+      const container = document.getElementById('journal-entries');
+      if (container) container.style.willChange = 'transform';
+    });
+    requestAnimationFrame(() => {
+      const container = document.getElementById('journal-entries');
+      if (container) container.style.transform = 'translateZ(0)';
+    });
+  }
   
   // Add health check entry
   function addHealthCheckEntry(plantId, healthData, photo) {
