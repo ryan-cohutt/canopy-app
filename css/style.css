@@ -5,6 +5,13 @@
     box-sizing: border-box;
 }
 
+/* Ensure screens don't overlap during transitions */
+section[id$="-screen"],
+section#plant-info {
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+}
+
 :root {
     --safe-area-top: env(safe-area-inset-top, 0px);
     --safe-area-bottom: env(safe-area-inset-bottom, 0px);
@@ -2014,6 +2021,44 @@ input[type="time"] {
 .journal-entry-date {
     color: var(--color-green);
     font-size: 14px;
+}
+
+.journal-entry-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.journal-edit-btn,
+.journal-delete-btn {
+    background: var(--color-bg);
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-muted);
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.journal-edit-btn:active,
+.journal-delete-btn:active {
+    transform: scale(0.92);
+}
+
+.journal-edit-btn:hover,
+.journal-edit-btn:focus {
+    color: var(--color-green);
+    background: rgba(149, 219, 89, 0.15);
+}
+
+.journal-delete-btn:hover,
+.journal-delete-btn:focus {
+    color: rgb(184, 23, 76);
+    background: rgba(184, 23, 76, 0.15);
 }
 
 .journal-entry-tags {

@@ -200,76 +200,126 @@ const NavigationManager = (function() {
 // ==================== SCREEN TRANSITION MANAGER ====================
 
 const TransitionManager = (function() {
-  const TRANSITION_DURATION = 350;
-  const EASE_CURVE = 'cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+  const TRANSITION_DURATION = 320;
+  const EASE_CURVE = 'cubic-bezier(0.32, 0.72, 0, 1)'; // iOS-style deceleration curve
+  
+  // Track if a transition is in progress to prevent overlap
+  let isTransitioning = false;
 
   function slideTransition(fromEl, toEl, direction = 'forward', callback) {
     if (!fromEl || !toEl) {
       if (callback) callback();
       return;
     }
-
-    // Prepare elements
-    fromEl.style.position = 'absolute';
-    fromEl.style.top = '0';
-    fromEl.style.left = '0';
-    fromEl.style.width = '100%';
-    fromEl.style.zIndex = direction === 'forward' ? '1' : '2';
-
-    toEl.style.display = 'grid';
-    toEl.style.position = 'absolute';
-    toEl.style.top = '0';
-    toEl.style.left = '0';
-    toEl.style.width = '100%';
-    toEl.style.zIndex = direction === 'forward' ? '2' : '1';
-    toEl.style.opacity = '1';
-
-    if (direction === 'forward') {
-      // Entering screen slides in from right
-      toEl.style.transform = 'translateX(100%)';
-      fromEl.style.transform = 'translateX(0)';
-    } else {
-      // Entering screen slides in from left (was behind)
-      toEl.style.transform = 'translateX(-30%)';
-      toEl.style.opacity = '0.7';
-      fromEl.style.transform = 'translateX(0)';
+    
+    // Prevent overlapping transitions
+    if (isTransitioning) {
+      return;
     }
+    isTransitioning = true;
 
+    // Create a container for both screens to ensure proper layering
+    const container = document.createElement('div');
+    container.style.cssText = `
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      z-index: 9999;
+      background: var(--color-bg);
+    `;
+    document.body.appendChild(container);
+
+    // Clone both elements into the container for clean animation
+    const fromClone = fromEl.cloneNode(true);
+    const toClone = toEl.cloneNode(true);
+    
+    // Style the clones for animation
+    fromClone.style.cssText = `
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: grid;
+      opacity: 1;
+      transform: translateX(0);
+      z-index: ${direction === 'forward' ? '1' : '2'};
+      will-change: transform, opacity;
+      pointer-events: none;
+    `;
+    
+    toClone.style.cssText = `
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: grid;
+      opacity: ${direction === 'forward' ? '1' : '0.85'};
+      transform: translateX(${direction === 'forward' ? '100%' : '-25%'});
+      z-index: ${direction === 'forward' ? '2' : '1'};
+      will-change: transform, opacity;
+      pointer-events: none;
+    `;
+
+    container.appendChild(fromClone);
+    container.appendChild(toClone);
+
+    // Hide originals immediately
+    fromEl.style.display = 'none';
+    
     // Force reflow
-    void toEl.offsetWidth;
+    void toClone.offsetWidth;
 
-    // Start transition
-    fromEl.style.transition = `transform ${TRANSITION_DURATION}ms ${EASE_CURVE}, opacity ${TRANSITION_DURATION}ms ${EASE_CURVE}`;
-    toEl.style.transition = `transform ${TRANSITION_DURATION}ms ${EASE_CURVE}, opacity ${TRANSITION_DURATION}ms ${EASE_CURVE}`;
+    // Apply transitions
+    fromClone.style.transition = `transform ${TRANSITION_DURATION}ms ${EASE_CURVE}, opacity ${TRANSITION_DURATION}ms ${EASE_CURVE}`;
+    toClone.style.transition = `transform ${TRANSITION_DURATION}ms ${EASE_CURVE}, opacity ${TRANSITION_DURATION}ms ${EASE_CURVE}`;
 
+    // Animate
     requestAnimationFrame(() => {
-      if (direction === 'forward') {
-        toEl.style.transform = 'translateX(0)';
-        fromEl.style.transform = 'translateX(-30%)';
-        fromEl.style.opacity = '0.7';
-      } else {
-        toEl.style.transform = 'translateX(0)';
-        toEl.style.opacity = '1';
-        fromEl.style.transform = 'translateX(100%)';
-      }
+      requestAnimationFrame(() => {
+        if (direction === 'forward') {
+          // Forward: new screen slides in from right, old slides left
+          toClone.style.transform = 'translateX(0)';
+          fromClone.style.transform = 'translateX(-25%)';
+          fromClone.style.opacity = '0.85';
+        } else {
+          // Back: old screen slides out to right, new slides in from left
+          fromClone.style.transform = 'translateX(100%)';
+          fromClone.style.opacity = '0.85';
+          toClone.style.transform = 'translateX(0)';
+          toClone.style.opacity = '1';
+        }
+      });
     });
 
     setTimeout(() => {
-      // Clean up
-      fromEl.style.display = 'none';
+      // Show the real destination element
+      toEl.style.display = 'grid';
+      toEl.style.opacity = '1';
+      toEl.style.transform = '';
+      
+      // Clean up from element
       fromEl.style.position = '';
       fromEl.style.transform = '';
       fromEl.style.opacity = '';
       fromEl.style.transition = '';
       fromEl.style.zIndex = '';
-
-      toEl.style.position = '';
-      toEl.style.transform = '';
-      toEl.style.transition = '';
-      toEl.style.zIndex = '';
+      
+      // Remove the animation container
+      if (container.parentNode) {
+        container.parentNode.removeChild(container);
+      }
+      
+      isTransitioning = false;
 
       if (callback) callback();
-    }, TRANSITION_DURATION);
+    }, TRANSITION_DURATION + 16); // Add a small buffer for smoother completion
   }
 
   function fadeTransition(fromEl, toEl, callback) {
@@ -303,14 +353,19 @@ const TransitionManager = (function() {
   function bottomSheetOpen(sheetEl) {
     if (!sheetEl) return;
 
+    // Prepare sheet for animation
     sheetEl.style.display = 'grid';
-    sheetEl.style.top = '100dvh';
+    sheetEl.style.transform = 'translateY(100%)';
     sheetEl.style.opacity = '1';
+    sheetEl.style.bottom = '0';
+    sheetEl.style.top = 'auto';
+    
+    // Force reflow
+    void sheetEl.offsetWidth;
 
     requestAnimationFrame(() => {
-      sheetEl.style.transition = 'top 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
-      sheetEl.style.top = 'auto';
-      sheetEl.style.bottom = '0';
+      sheetEl.style.transition = 'transform 0.38s cubic-bezier(0.32, 0.72, 0, 1)';
+      sheetEl.style.transform = 'translateY(0)';
     });
   }
 
@@ -320,19 +375,18 @@ const TransitionManager = (function() {
       return;
     }
 
-    sheetEl.style.transition = 'transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 0.2s ease';
+    sheetEl.style.transition = 'transform 0.28s cubic-bezier(0.32, 0.72, 0, 1)';
     sheetEl.style.transform = 'translateY(100%)';
-    sheetEl.style.opacity = '0';
 
     setTimeout(() => {
       sheetEl.style.display = 'none';
       sheetEl.style.transform = '';
       sheetEl.style.opacity = '';
       sheetEl.style.transition = '';
-      sheetEl.style.top = '100dvh';
-      sheetEl.style.bottom = 'auto';
+      sheetEl.style.top = '';
+      sheetEl.style.bottom = '';
       if (callback) callback();
-    }, 300);
+    }, 280);
   }
 
   return {
