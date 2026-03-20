@@ -516,23 +516,18 @@ const JournalManager = (function() {
     updatePlantPhotoToLatest();
     
     // Close sheet first, then render after animation completes
-    resetEntryForm();
-    renderEntries();
+    const card = document.getElementById('add-journal-card');
 
-    requestAnimationFrame(() => {
-      const container = document.getElementById('journal-entries');
-      if (container) container.style.willChange = 'transform';
-    });
-
-    requestAnimationFrame(() => {
-      const card = document.getElementById('add-journal-card');
-
-      if (window.TransitionManager && card) {
-        TransitionManager.bottomSheetClose(card);
-      } else if (card) {
-        card.style.display = 'none';
-      }
-    });
+    if (window.TransitionManager && card) {
+      TransitionManager.bottomSheetClose(card, () => {
+        resetEntryForm();
+        renderEntries();
+      });
+    } else if (card) {
+      card.style.display = 'none';
+      resetEntryForm();
+      renderEntries();
+    }
   }
   
   // Add health check entry
